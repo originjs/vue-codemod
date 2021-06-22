@@ -13,6 +13,7 @@ import builtInTransformations from '../transformations'
 import { excludedTransformations } from '../transformations'
 import vueTransformations from '../vue-transformations'
 import runTransformation from '../src/runTransformation'
+import { transform as packageTransform } from '../src/packageTransformation'
 
 import type { TransformationModule } from '../src/runTransformation'
 
@@ -23,34 +24,34 @@ const {
   _: files,
   transformation: transformationName,
   runAllTransformation: runAllTransformation,
-  params,
+  params
 } = yargs
   .usage('Usage: $0 [file pattern]')
   .option('transformation', {
     alias: 't',
     type: 'string',
     conflicts: 'runAllTransformation',
-    describe: 'Name or path of the transformation module',
+    describe: 'Name or path of the transformation module'
   })
   .option('params', {
     alias: 'p',
-    describe: 'Custom params to the transformation',
+    describe: 'Custom params to the transformation'
   })
   .option('runAllTransformation', {
     alias: 'a',
     type: 'boolean',
     conflicts: 'transformation',
-    describe: 'run all transformation module',
+    describe: 'run all transformation module'
   })
   .example([
     [
       'npx vue-codemod ./src -a',
-      'Run all rules to convert all relevant files in the ./src folder',
+      'Run all rules to convert all relevant files in the ./src folder'
     ],
     [
       'npx vue-codemod ./src/components/HelloWorld.vue -t slot-attribute',
-      'Run slot-attribute rule to convert HelloWorld.vue',
-    ],
+      'Run slot-attribute rule to convert HelloWorld.vue'
+    ]
   ])
   .help()
   .alias('h', 'help').argv
@@ -65,6 +66,7 @@ async function main() {
       transformationName,
       transformationModule
     )
+    packageTransform()
   }
 
   if (runAllTransformation) {
@@ -77,6 +79,7 @@ async function main() {
     for (let key in vueTransformations) {
       processTransformation(resolvedPaths, key, vueTransformations[key])
     }
+    packageTransform()
   }
 }
 /**
@@ -99,7 +102,7 @@ function processTransformation(
     debug(`Processing ${p}…`)
     const fileInfo = {
       path: p,
-      source: fs.readFileSync(p).toString(),
+      source: fs.readFileSync(p).toString()
     }
     const extension = (/\.([^.]*)$/.exec(fileInfo.path) || [])[0]
     if (!extensions.includes(extension)) {
@@ -119,7 +122,7 @@ function processTransformation(
   }
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(err)
   process.exit(1)
 })

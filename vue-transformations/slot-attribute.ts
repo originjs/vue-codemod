@@ -5,10 +5,10 @@ import type { VueASTTransformation } from '../src/wrapVueTransformation'
 import * as parser from 'vue-eslint-parser'
 import wrap from '../src/wrapVueTransformation'
 
-export const transformAST: VueASTTransformation = (context) => {
+export const transformAST: VueASTTransformation = context => {
   let fixOperations: Operation[] = []
   const toFixNodes: Node[] = findNodes(context)
-  toFixNodes.forEach((node) => {
+  toFixNodes.forEach(node => {
     fixOperations = fixOperations.concat(fix(node))
   })
   return fixOperations
@@ -34,7 +34,7 @@ function findNodes(context: any): Node[] {
         toFixNodes.push(node)
       }
     },
-    leaveNode(node: Node) {},
+    leaveNode(node: Node) {}
   })
   return toFixNodes
 }
@@ -60,11 +60,44 @@ function fix(node: Node): Operation[] {
     // remove v-slot:${slotValue}
     fixOperations.push(OperationUtils.remove(node))
     // add <template v-slot:${slotValue}>
-    fixOperations.push(
-      OperationUtils.insertTextBefore(element, `<template v-slot:${slotValue}>`)
-    )
-    // add </template>
-    fixOperations.push(OperationUtils.insertTextAfter(element, `</template>`))
+
+    let elder: any = null
+    let hasSlotAttr: boolean = false
+    let tmp: any = element
+    // find template parent
+    while (elder == null && tmp != null) {
+      hasSlotAttr = false
+      tmp = tmp.parent
+      if (tmp == null || tmp.type != 'VElement' || tmp.name != 'template') {
+        continue
+      }
+
+      elder = element
+      tmp.startTag.attributes
+        .filter(
+          (attr: any) =>
+            attr.type === 'VAttribute' &&
+            attr.key.type === 'VIdentifier' &&
+            attr.key.name === 'slot'
+        )
+        .forEach((element: any) => {
+          hasSlotAttr = true
+        })
+      if (hasSlotAttr) {
+        break
+      }
+    }
+
+    if (!hasSlotAttr) {
+      fixOperations.push(
+        OperationUtils.insertTextBefore(
+          element,
+          `<template v-slot:${slotValue}>`
+        )
+      )
+      // add </template>
+      fixOperations.push(OperationUtils.insertTextAfter(element, `</template>`))
+    }
   }
 
   return fixOperations
