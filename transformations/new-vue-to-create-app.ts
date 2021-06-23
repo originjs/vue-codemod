@@ -142,7 +142,12 @@ export const transformAST: ASTTransformation<Params | void> = (
           prop =>
             j.ObjectProperty.check(prop) &&
             j.Identifier.check(prop.key) &&
-            prop.key.name === 'el'
+            prop.key.name === 'el' &&
+            // ignore single el but not el:'#app'
+            // @ts-ignore
+            prop.key.start !== prop.value.start &&
+            // @ts-ignore
+            prop.key.end !== prop.value.end
         )
       )
     })
