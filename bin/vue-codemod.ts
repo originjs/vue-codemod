@@ -70,6 +70,7 @@ async function main() {
       'press enter or enter yes or enter Y to continue:'
   )
   if (!['', 'yes', 'Y'].includes(answer.trim())) {
+    console.log('Abort!!!')
     return
   }
 
