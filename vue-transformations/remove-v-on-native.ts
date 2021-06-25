@@ -60,7 +60,7 @@ function fix(node: Node, source: string): Operation[] {
     modifiers.forEach((mod: any) => {
       if (mod?.name === 'native') {
         const comment =
-        '<!-- native modifier has been removed, please confirm whether the function has been affected  -->'
+          '<!-- native modifier has been removed, please confirm whether the function has been affected  -->'
         const vStartTag = mod.parent.parent.parent
         const vElement = vStartTag.parent
         const siblings = vElement.parent.children

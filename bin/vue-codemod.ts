@@ -136,7 +136,7 @@ function processTransformation(
     debug(`Processing ${p}…`)
     const fileInfo = {
       path: p,
-      source: fs.readFileSync(p).toString().split('\r\n').join('\n'),
+      source: fs.readFileSync(p).toString().split('\r\n').join('\n')
     }
     const extension = (/\.([^.]*)$/.exec(fileInfo.path) || [])[0]
     if (!extensions.includes(extension)) {

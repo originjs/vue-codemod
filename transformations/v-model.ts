@@ -42,7 +42,7 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
   // remove model option
   modelCollection.remove()
 
-  if(!valueNodePath.length) return
+  if (!valueNodePath.length) return
 
   // replace the value with modelValue
   // @ts-ignore
