@@ -5,6 +5,49 @@ import createDebug from 'debug'
 
 const debug = createDebug('vue-codemod:rule')
 
+type AddOrUpdateConfig = {
+  [name: string]: string
+}
+
+type Config = {
+  [name: string]: AddOrUpdateConfig
+}
+
+const globalAddConfig: {
+  [name: string]: Config
+} = {
+  global: {
+    add: {},
+    update: {
+      vue: '^3.1.1',
+      vuex: '^4.0.1',
+      'vue-router': '^4.0.8',
+      'vue-i18n': '^9.1.6'
+    },
+    delete: { 'vue-templadte-compiler': '', '@vue/composition-api': '' }
+  },
+  dependencies: {
+    add: {},
+    update: {},
+    delete: {}
+  },
+  peerDependencies: { add: {}, update: {}, delete: {} },
+  devDependencies: {
+    add: {
+      '@babel/core': '^7.14.6',
+      eslint: '^7.20.0',
+      '@vue/compiler-sfc': '^3.1.1',
+      'eslint-plugin-vue': '^7.11.1'
+    },
+    update: {
+      '@vue/cli-plugin-babel': '^3.12.1',
+      '@vue/cli-plugin-eslint': '^3.12.1',
+      '@vue/cli-service': '^3.12.1'
+    },
+    delete: { 'babel-eslint': '' }
+  }
+}
+
 /**
  * Creates a fix command that inserts text at the specified index in the source text.
  * @param {int} index The 0-based index at which to insert the new text.
@@ -20,59 +63,61 @@ export function transform(): boolean {
     return false
   }
 
-  let packageObject: any = JSON.parse(
-    fs.readFileSync(resolvedPaths[0]).toString()
-  )
+  let packageObj: any = JSON.parse(fs.readFileSync(resolvedPaths[0]).toString())
 
-  if (packageObject?.dependencies != undefined) {
-    debug('Process dependencies')
-    process(packageObject.dependencies)
-  }
-
-  if (packageObject?.peerDependencies != undefined) {
-    debug('Process peerDependencies')
-    process(packageObject.peerDependencies)
-  }
-
-  if (packageObject?.devDependencies != undefined) {
-    debug('Process devDependencies')
-    process(packageObject.devDependencies)
-  }
-
-  if (packageObject?.devDependencies != undefined) {
-    packageObject.devDependencies['@vue/compiler-sfc'] = '^3.1.1'
-    packageObject.devDependencies['eslint'] = '^7.20.0'
-    packageObject.devDependencies['eslint-plugin-vue'] = '^7.11.1'
-  }
+  packageObj = process(packageObj)
 
   let formatted = prettier.format(
-    JSON.stringify(packageObject),
-    Object.assign({ parser: 'json' }, packageObject.prettier)
+    JSON.stringify(packageObj),
+    Object.assign(
+      { parser: 'json' },
+      packageObj?.prettier ? packageObj?.prettier : {}
+    )
   )
   fs.writeFileSync(resolvedPaths[0], formatted)
   return true
 }
 /**
  * Modify the configuration of dependencies
- * @param dependencies
+ * @param packageObj package.json source
  */
-function process(dependencies: any) {
-  if (dependencies['vue'] != undefined) {
-    dependencies.vue = '^3.1.1'
+export function process(packageObj: any): any {
+  Object.keys(globalAddConfig)
+    .filter(key => {
+      return key != 'global'
+    })
+    .forEach(key => {
+      if (packageObj[key] != undefined) {
+        debug(`Process ${key}`)
+        packageObj[key] = processCore(packageObj[key], globalAddConfig.global)
+        packageObj[key] = processCore(packageObj[key], globalAddConfig[key])
+      }
+    })
+
+  if (packageObj?.eslintConfig?.parserOptions?.parser != undefined) {
+    packageObj.eslintConfig.parserOptions.parser = '@babel/eslint-parser'
   }
-  if (dependencies['vuex'] != undefined) {
-    dependencies['vuex'] = '^4.0.1'
-  }
-  if (dependencies['vue-router'] != undefined) {
-    dependencies['vue-router'] = '^4.0.8'
-  }
-  if (dependencies['vue-i18n'] != undefined) {
-    dependencies['vue-i18n'] = '^9.1.6'
-  }
-  if (dependencies['vue-template-compiler'] != undefined) {
-    delete dependencies['vue-template-compiler']
-  }
-  if (dependencies['@vue/composition-api'] != undefined) {
-    delete dependencies['@vue/composition-api']
-  }
+  return packageObj
+}
+/**
+ * process package.json
+ * @param packageObj dependencies...
+ * @param config key of config
+ * @returns package.json
+ */
+function processCore(packageObj: any, config: Config): any {
+  Object.keys(config.add).forEach(key => {
+    packageObj[key] = config.add[key]
+  })
+
+  Object.keys(config.update).forEach(key => {
+    if (packageObj[key] != undefined) {
+      packageObj[key] = config.update[key]
+    }
+  })
+
+  Object.keys(config.delete).forEach(key => {
+    delete packageObj[key]
+  })
+  return packageObj
 }
