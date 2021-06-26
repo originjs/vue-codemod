@@ -23,6 +23,7 @@ const transformationMap: {
   'tree-shaking': require('./tree-shaking'),
   'v-model': require('./v-model'),
   'render-to-resolveComponent': require('./render-to-resolveComponent'),
+  'vue-i18n-v9': require('vue-i18n-v9'),
 
   // atomic ones
   'remove-contextual-h-from-render': require('./remove-contextual-h-from-render'),
