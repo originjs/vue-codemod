@@ -40,9 +40,9 @@ const globalAddConfig: {
       'eslint-plugin-vue': '^7.11.1'
     },
     update: {
-      '@vue/cli-plugin-babel': '^3.12.1',
-      '@vue/cli-plugin-eslint': '^3.12.1',
-      '@vue/cli-service': '^3.12.1'
+      '@vue/cli-plugin-babel': '^4.5.0',
+      '@vue/cli-plugin-eslint': '^4.5.0',
+      '@vue/cli-service': '^4.5.0'
     },
     delete: { 'babel-eslint': '' }
   }
