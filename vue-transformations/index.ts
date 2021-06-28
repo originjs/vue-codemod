@@ -19,7 +19,8 @@ const transformationMap: {
   'v-bind-sync': require('./v-bind-sync'),
   'remove-v-on-native': require('./remove-v-on-native'),
   'router-link-event-tag': require('./router-link-event-tag'),
-  'router-link-exact': require('./router-link-exact')
+  'router-link-exact': require('./router-link-exact'),
+  'router-view-keep-alive-transition': require('router-view-keep-alive-transition')
 }
 
 export const excludedVueTransformations = ['v-bind-order-sensitive']
