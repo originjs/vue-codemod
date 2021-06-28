@@ -20,6 +20,10 @@ export const transformAST: ASTTransformation = context => {
     specifier: { type: 'named', imported: 'resolveComponent' },
     source: 'vue'
   })
+  addImport(context, {
+    specifier: { type: 'named', imported: 'h' },
+    source: 'vue'
+  })
 
   renderCollections.forEach(({ node }) => {
     // @ts-ignore
@@ -48,7 +52,7 @@ export const transformAST: ASTTransformation = context => {
     // replace h('xxx') with resolveComponent('xxx')
     callExpressionCollection.replaceWith(
       // @ts-ignore
-      nodePath => (nodePath.node.callee.name = componentVariableName)
+      nodePath => (nodePath.node.callee.name = `h(${componentVariableName})`)
     )
   })
 }

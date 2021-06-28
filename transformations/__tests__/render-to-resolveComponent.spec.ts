@@ -10,11 +10,11 @@ defineInlineTest(
   }
 }`,
   `
-import { resolveComponent } from "vue";
+import { resolveComponent, h } from "vue";
 export default {
   render() {
     const buttonCounter = resolveComponent('button-counter')
-    return buttonCounter;
+    return h(buttonCounter);
   }
 }`,
   'transform render-to-resolveComponent'
