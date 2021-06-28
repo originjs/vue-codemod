@@ -35,7 +35,9 @@ const transformationMap: {
 
   // generic utility tranformations
   'add-import': require('./add-import'),
-  'remove-extraneous-import': require('./remove-extraneous-import')
+  'remove-extraneous-import': require('./remove-extraneous-import'),
+
+  'router-update-addRoute': require('./router/router-update-addRoute')
 }
 
 export const excludedTransformations = [
