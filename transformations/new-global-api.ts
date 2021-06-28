@@ -18,6 +18,7 @@ export const transformAST: ASTTransformation = context => {
   newVueTocreateApp(context)
   rootPropToUse(context, { rootPropName: 'store' })
   rootPropToUse(context, { rootPropName: 'router' })
+  rootPropToUse(context, { rootPropName: 'i18n' })
   removeTrivialRoot(context)
   removeProductionTip(context)
 
