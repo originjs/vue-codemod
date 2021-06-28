@@ -37,7 +37,7 @@ const transformationMap: {
   'add-import': require('./add-import'),
   'remove-extraneous-import': require('./remove-extraneous-import'),
 
-  'router4-onready-to-isready': require('./router/router4-onready-to-isready')
+  'router4-onready-to-isready': require('./router/router4-onready-to-isready'),
   'router-update-addRoute': require('./router/router-update-addRoute')
 }
 

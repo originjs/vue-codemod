@@ -30,4 +30,5 @@ jobs:
       - run: yarn add -D jest@25 ts-jest@25 @types/jest@25 prettier@1
         if: ${{ matrix.node-version == '8.x' }}
       - run: yarn --pure-lockfile
+      - run: yarn build
       - run: yarn test
