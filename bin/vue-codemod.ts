@@ -74,6 +74,9 @@ async function main() {
     return
   }
 
+  // init global params
+  global.globalApi = []
+
   const resolvedPaths = globby.sync(files as string[])
   if (transformationName != undefined) {
     debug(`run ${transformationName} transformation`)

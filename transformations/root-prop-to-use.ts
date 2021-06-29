@@ -5,6 +5,7 @@ import * as N from 'jscodeshift'
 
 type Params = {
   rootPropName: string
+  isGlobalApi?: boolean
 }
 
 /**
@@ -12,13 +13,14 @@ type Params = {
  * Transforms expressions like `createApp({ router })` to `createApp().use(router)`
  */
 export const transformAST: ASTTransformation<Params> = (
-  { root, j },
-  { rootPropName }
+  { root, j, filename },
+  { rootPropName, isGlobalApi }
 ) => {
   const appRoots = root.find(j.CallExpression, (node: N.CallExpression) => {
     if (
-      node.arguments.length === 1 &&
-      j.ObjectExpression.check(node.arguments[0])
+      (node.arguments.length === 1 &&
+        j.ObjectExpression.check(node.arguments[0])) ||
+      isGlobalApi
     ) {
       if (j.Identifier.check(node.callee) && node.callee.name === 'createApp') {
         return true
@@ -35,6 +37,40 @@ export const transformAST: ASTTransformation<Params> = (
       }
     }
   })
+
+  // add global api to main.js used by component
+  if (
+    isGlobalApi &&
+    global.globalApi != undefined &&
+    global.globalApi.length > 0
+  ) {
+    console.log('add global api in createApp')
+    const addImport = require('./add-import')
+    for (let i in global.globalApi) {
+      let api = global.globalApi[i]
+
+      // add import
+      addImport.transformAST(
+        { root, j },
+        {
+          specifier: {
+            type: 'named',
+            imported: api.name
+          },
+          source: '../' + api.path
+        }
+      )
+
+      // add use
+      appRoots.replaceWith(({ node: createAppCall }) => {
+        return j.callExpression(
+          j.memberExpression(createAppCall, j.identifier('use')),
+          [j.identifier(api.name)]
+        )
+      })
+    }
+    return
+  }
 
   appRoots.replaceWith(({ node: createAppCall }) => {
     const rootProps = createAppCall.arguments[0] as N.ObjectExpression
