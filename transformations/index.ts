@@ -24,6 +24,7 @@ const transformationMap: {
   'v-model': require('./v-model'),
   'render-to-resolveComponent': require('./render-to-resolveComponent'),
   'vue-i18n-v9': require('./vue-i18n-v9'),
+  'vuex-create-logger': require('./vuex-create-logger'),
 
   // atomic ones
   'remove-contextual-h-from-render': require('./remove-contextual-h-from-render'),
