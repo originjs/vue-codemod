@@ -64,6 +64,8 @@ export const transformAST: ASTTransformation = context => {
         } else if ((p.key as any).name === 'base') {
           baseValue = p.value
           return false
+        } else if ((p.key as any).name === 'fallback') {
+          return false
         }
 
         return true

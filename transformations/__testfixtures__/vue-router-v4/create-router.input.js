@@ -20,7 +20,8 @@ const router = new VueRouter({
 });
 
 new VueRouter({
-  routes
+  routes,
+  fallback: false
 });
 
 export default router;
