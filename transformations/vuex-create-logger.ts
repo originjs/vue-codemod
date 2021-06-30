@@ -12,15 +12,18 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   })
   if (!importDeclarationCollection.length) return
 
-  const importName = importDeclarationCollection.get(0).node.specifiers[0].local.name
+  const importName =
+    importDeclarationCollection.get(0).node.specifiers[0].local.name
   if (importName !== 'createLogger') {
     //  rename function name
-    root.find(j.CallExpression, node => {
-      return node.callee.name === importName
-    }).replaceWith(({ node }) => {
-      // @ts-ignore
-      return j.callExpression(j.identifier('createLogger'), node.arguments)
-    })
+    root
+      .find(j.CallExpression, node => {
+        return node.callee.name === importName
+      })
+      .replaceWith(({ node }) => {
+        // @ts-ignore
+        return j.callExpression(j.identifier('createLogger'), node.arguments)
+      })
   }
 
   //  remove import
