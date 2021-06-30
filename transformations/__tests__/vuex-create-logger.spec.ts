@@ -14,3 +14,17 @@ const store = new Vuex.Store({
 })`,
   'vuex createLogger'
 )
+
+defineInlineTest(
+  transform,
+  {},
+  `import logger from 'vuex/dist/logger'
+const store = new Vuex.Store({
+  plugins: [logger()]
+})`,
+  `import { createLogger } from "vuex";
+const store = new Vuex.Store({
+  plugins: [createLogger()]
+})`,
+  'vuex createLogger another name'
+)
