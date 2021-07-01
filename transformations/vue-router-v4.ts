@@ -26,10 +26,28 @@ export const transformAST: ASTTransformation = context => {
       }
     })
 
-    addImport(context, {
-      specifier: { type: 'named', imported: 'createRouter' },
-      source: 'vue-router'
+    let localCreateRouter = 'createRouter'
+    // find whether createRouter has been used
+    const createRouterIdentifiers = root.find(j.Identifier, {
+      name: 'createRouter'
     })
+    if (createRouterIdentifiers.length) {
+      // rename createRouter to newCreateRouter
+      localCreateRouter = 'newCreateRouter'
+      addImport(context, {
+        specifier: {
+          type: 'named',
+          imported: 'createRouter',
+          local: localCreateRouter
+        },
+        source: 'vue-router'
+      })
+    } else {
+      addImport(context, {
+        specifier: { type: 'named', imported: 'createRouter' },
+        source: 'vue-router'
+      })
+    }
     newVueRouter.replaceWith(({ node }) => {
       // mode: 'history' -> history: createWebHistory(), etc
       let historyMode = 'createWebHashHistory'
@@ -89,7 +107,7 @@ export const transformAST: ASTTransformation = context => {
         )
       )
 
-      return j.callExpression(j.identifier('createRouter'), node.arguments)
+      return j.callExpression(j.identifier(localCreateRouter), node.arguments)
     })
     removeExtraneousImport(context, {
       localBinding: localVueRouter
