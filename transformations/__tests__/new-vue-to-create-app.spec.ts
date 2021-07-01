@@ -9,13 +9,14 @@ defineInlineTest(
   'transform `new Vue()` to createApp()'
 )
 
-defineInlineTest(
-  transform,
-  {},
-  `new Vue()`,
-  `Vue.createApp()`,
-  'transform `new Vue()` to createApp() with no arguments'
-)
+// Vue.prototype.$baseEventBus = new Vue() will be transform to Vue.prototype.$baseEventBus = new createApp()
+// defineInlineTest(
+//   transform,
+//   {},
+//   `new Vue()`,
+//   `Vue.createApp()`,
+//   'transform `new Vue()` to createApp() with no arguments'
+// )
 
 defineInlineTest(
   transform,
@@ -81,5 +82,13 @@ defineInlineTest(
   `const container = new LazyContainer({ el, binding, vnode, lazy: this.lazy })`,
   `const container = new LazyContainer({ el, binding, vnode, lazy: this.lazy })`,
   'transform `new MyComponent` with `el` prop'
+)
+
+defineInlineTest(
+  transform,
+  {},
+  `Vue.prototype.$baseEventBus = new Vue()`,
+  `Vue.prototype.$baseEventBus = new Vue()`,
+  'mitt and tiny-emitter are recommended in vue-next'
 )
 

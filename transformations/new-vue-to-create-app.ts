@@ -22,12 +22,16 @@ export const transformAST: ASTTransformation<Params | void> = (
   const { j, root } = context
   const { includeMaybeComponents = true } = params
 
-  const newVue = root.find(j.NewExpression, {
-    callee: {
-      type: 'Identifier',
-      name: 'Vue'
-    }
-  })
+  const newVue = root
+    .find(j.NewExpression, {
+      callee: {
+        type: 'Identifier',
+        name: 'Vue'
+      }
+    })
+    .filter(({ node }) => {
+      return node.arguments.length > 0
+    })
 
   // new Vue() -> Vue.createApp()
   newVue.replaceWith(({ node }) => {
