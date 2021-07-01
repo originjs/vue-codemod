@@ -24,7 +24,7 @@ const globalAddConfig: {
       'vue-router': '^4.0.8',
       'vue-i18n': '^9.1.6'
     },
-    delete: { 'vue-templadte-compiler': '', '@vue/composition-api': '' }
+    delete: { 'vue-template-compiler': '', '@vue/composition-api': '' }
   },
   dependencies: {
     add: {},

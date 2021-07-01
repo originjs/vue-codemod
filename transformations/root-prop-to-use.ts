@@ -2,7 +2,9 @@ import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 import * as N from 'jscodeshift'
+import createDebug from 'debug'
 
+const debug = createDebug('vue-codemod:rule')
 type Params = {
   rootPropName: string
   isGlobalApi?: boolean
@@ -38,13 +40,19 @@ export const transformAST: ASTTransformation<Params> = (
     }
   })
 
+  if (appRoots == undefined || appRoots.length == 0) {
+    debug('No target Approots, jump out of this transition. ')
+    return
+  }
+
   // add global api to main.js used by component
-  if (
-    isGlobalApi &&
-    global.globalApi != undefined &&
-    global.globalApi.length > 0
-  ) {
-    console.log('add global api in createApp')
+  if (isGlobalApi) {
+    debug(filename)
+    if (global.globalApi == undefined || global.globalApi.length == 0) {
+      debug('global api is empty')
+      return
+    }
+    debug('add global api in createApp')
     const addImport = require('./add-import')
     for (let i in global.globalApi) {
       let api = global.globalApi[i]
