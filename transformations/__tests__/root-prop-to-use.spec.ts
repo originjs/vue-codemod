@@ -44,8 +44,8 @@ defineInlineTest(
   transform,
   { rootPropName: '', isGlobalApi: true },
   `Vue.createApp();`,
-  `import { api1 } from "../src/directive/permission/api1.js";
-import { api2 } from "../src/directive/api2.js";
+  `import api1 from "../src/directive/permission/api1.js";
+import api2 from "../src/directive/api2.js";
 Vue.createApp().use(api1).use(api2);`,
   'Can recognize global api use'
 )

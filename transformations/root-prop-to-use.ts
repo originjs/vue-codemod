@@ -62,8 +62,8 @@ export const transformAST: ASTTransformation<Params> = (
         { root, j },
         {
           specifier: {
-            type: 'named',
-            imported: api.name
+            type: 'default',
+            local: api.name
           },
           source: '../' + api.path
         }
