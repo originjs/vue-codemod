@@ -38,3 +38,13 @@ defineInlineTest(
   `app.use(router);`,
   `don't remove app.use`
 )
+
+defineInlineTest(
+  transform,
+  {
+    removablePlugins: ['VueRouter'],
+  },
+  `process.env.NODE_ENV === 'development' ? Vue.use(VueRouter) : null`,
+  `process.env.NODE_ENV === 'development' ? Vue.use(VueRouter) : null`,
+  `don't remove Vue.use in other expression`
+)
