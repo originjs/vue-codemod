@@ -91,6 +91,30 @@ export const transformAST: ASTTransformation = context => {
 
       return j.callExpression(j.identifier('createRouter'), node.arguments)
     })
+
+    // VueRouter.START_LOCATION => import {START_LOCATION} from 'vue-router'
+    const startLocationMember = root.find(j.MemberExpression, {
+      object: {
+        type: 'Identifier',
+        name: localVueRouter
+      },
+      property: {
+        type: 'Identifier',
+        name: 'START_LOCATION'
+      }
+    })
+
+    if (startLocationMember.length) {
+      addImport(context, {
+        specifier: { type: 'named', imported: 'START_LOCATION' },
+        source: 'vue-router'
+      })
+
+      startLocationMember.replaceWith(({ node }) => {
+        return node.property
+      })
+    }
+
     removeExtraneousImport(context, {
       localBinding: localVueRouter
     })
