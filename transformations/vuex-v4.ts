@@ -36,15 +36,22 @@ export const transformAST: ASTTransformation = context => {
       }
     })
 
-    newVuexDotStore.replaceWith(({ node }) => {
-      return j.callExpression(
-        j.memberExpression(
-          j.identifier(localVuex),
-          j.identifier('createStore')
-        ),
-        node.arguments
-      )
-    })
+    if (newVuexDotStore.length) {
+      // replace import xxx from 'vuex' with import * as xxx from 'vuex'
+      importedVuex.replaceWith(({ node }) => {
+        return j.importNamespaceSpecifier(node.local)
+      })
+
+      newVuexDotStore.replaceWith(({ node }) => {
+        return j.callExpression(
+          j.memberExpression(
+            j.identifier(localVuex),
+            j.identifier('createStore')
+          ),
+          node.arguments
+        )
+      })
+    }
   }
 
   if (importedStore.length) {

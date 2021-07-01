@@ -26,7 +26,7 @@ export const transformAST: ASTTransformation = context => {
   // TODO:
   // should analyze the AST to get the default import of vue-router and vuex,
   // rather than hard-coding the names
-  removeVueUse(context, { removablePlugins: ['VueRouter', 'Vuex'] })
+  removeVueUse(context, { removablePlugins: ['VueRouter', 'Vuex','VueCompositionApi','VueI18n'] })
   removeContextualHFromRender(context)
 
   removeExtraneousImport(context, { localBinding: 'Vue' })

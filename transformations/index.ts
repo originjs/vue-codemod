@@ -8,6 +8,7 @@ type JSTransformationModule = {
 const transformationMap: {
   [name: string]: JSTransformationModule
 } = {
+  'new-component-api': require('./new-component-api'),
   'vue-class-component-v8': require('./vue-class-component-v8'),
   'new-global-api': require('./new-global-api'),
   'vue-router-v4': require('./vue-router-v4'),
@@ -24,6 +25,7 @@ const transformationMap: {
   'v-model': require('./v-model'),
   'render-to-resolveComponent': require('./render-to-resolveComponent'),
   'vue-i18n-v9': require('./vue-i18n-v9'),
+  'vuex-create-logger': require('./vuex-create-logger'),
 
   // atomic ones
   'remove-contextual-h-from-render': require('./remove-contextual-h-from-render'),

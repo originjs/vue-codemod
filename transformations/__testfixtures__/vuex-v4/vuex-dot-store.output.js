@@ -1,4 +1,4 @@
-import Vuex from 'vuex';
+import * as Vuex from 'vuex';
 
 const store = Vuex.createStore({
   state () {
