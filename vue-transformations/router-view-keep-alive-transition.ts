@@ -71,10 +71,9 @@ function fix(node: Node, source: string): Operation[] {
   if (routerView) {
     routerView = <VElement>routerView
     // get attributes text
-    let attributeText = ''
-    routerView.startTag.attributes.forEach(
-      node => (attributeText += OperationUtils.getText(node, source))
-    )
+    let attributeText = routerView.startTag.attributes
+      .map(attr => OperationUtils.getText(attr, source))
+      .join(' ')
     // replace with vue-router-next syntax
     fixOperations.push(
       OperationUtils.replaceText(routerView, '<component :is="Component" />')
