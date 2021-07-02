@@ -6,6 +6,12 @@ import * as _ from 'lodash'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j, filename } = context
+  const rootExpressionStatement = root
+    .find(j.ExpressionStatement)
+    .filter(path => path.parent.value.type === 'Program')
+  if (rootExpressionStatement.length > 1) {
+    return
+  }
   // find Vue.component
   const componentRegistration = root
     .find(j.CallExpression, {

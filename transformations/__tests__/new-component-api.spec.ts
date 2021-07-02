@@ -17,3 +17,19 @@ export default {
 };;`,
   'transform global component registration'
 )
+
+defineInlineTest(
+  transform,
+  {},
+  `import Vue from 'vue'
+import App from './App.vue'
+import MyComponent from './MyComponent'
+Vue.component('my-component', MyComponent)
+new Vue(App).$mount('app')`,
+  `import Vue from 'vue'
+import App from './App.vue'
+import MyComponent from './MyComponent'
+Vue.component('my-component', MyComponent)
+new Vue(App).$mount('app')`,
+  `don't transform global component api when there are other expression statements`
+)
