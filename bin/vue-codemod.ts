@@ -30,7 +30,7 @@ const {
   runAllTransformation: runAllTransformation,
   params
 } = yargs
-  .usage('Usage: $0 [file pattern]')
+  .usage('Usage: vue-codemod [file pattern] <option>')
   .option('transformation', {
     alias: 't',
     type: 'string',
@@ -63,6 +63,16 @@ const {
 
 // TODO: port the `Runner` interface of jscodeshift
 async function main() {
+  if (
+    (transformationName == undefined || transformationName == '') &&
+    runAllTransformation == undefined
+  ) {
+    console.log(
+      'You need at least one option in command, enter vue-codemod -h to see help. '
+    )
+    return
+  }
+
   // Remind user to back up files
   const answer = question(
     'Warning!!\n' +
