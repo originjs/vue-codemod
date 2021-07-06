@@ -1,17 +1,20 @@
 import type { Node } from 'vue-eslint-parser/ast/nodes'
 import type { Token } from 'vue-eslint-parser/ast/tokens'
-// import * as fixutils from "./fixUtils";
+/**
+ * The following function is adapted from https://github.com/eslint/eslint/blob/master/lib/linter/rule-fixer.js
+ * MIT License https://github.com/eslint/eslint/blob/master/LICENSE
+ */
+
 export type Operation = {
   range: number[]
   text: string
 }
-// TODO: for simplicity of implementation, we've skipped all `{ ...expr }` cases
 
 /**
  * Creates a fix command that inserts text at the specified index in the source text.
  * @param {int} index The 0-based index at which to insert the new text.
  * @param {string} text The text to insert.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  * @private
  */
 export function insertTextAt(index: number, text: string): Operation {
@@ -26,7 +29,7 @@ export function insertTextAt(index: number, text: string): Operation {
  * The fix is not applied until applyFixes() is called.
  * @param {Node|Token} nodeOrToken The node or token to insert after.
  * @param {string} text The text to insert.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function insertTextAfter(
   nodeOrToken: Node | Token,
@@ -41,7 +44,7 @@ export function insertTextAfter(
  * @param {int[]} range The range to replace, first item is start of range, second
  *      is end of range.
  * @param {string} text The text to insert.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function insertTextAfterRange(range: number[], text: string): Operation {
   return insertTextAt(range[1], text)
@@ -52,7 +55,7 @@ export function insertTextAfterRange(range: number[], text: string): Operation {
  * The fix is not applied until applyFixes() is called.
  * @param {Node|Token} nodeOrToken The node or token to insert before.
  * @param {string} text The text to insert.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function insertTextBefore(
   nodeOrToken: Node | Token,
@@ -67,7 +70,7 @@ export function insertTextBefore(
  * @param {int[]} range The range to replace, first item is start of range, second
  *      is end of range.
  * @param {string} text The text to insert.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function insertTextBeforeRange(
   range: number[],
@@ -81,7 +84,7 @@ export function insertTextBeforeRange(
  * The fix is not applied until applyFixes() is called.
  * @param {Node|Token} nodeOrToken The node or token to remove.
  * @param {string} text The text to insert.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function replaceText(
   nodeOrToken: Node | Token,
@@ -96,7 +99,7 @@ export function replaceText(
  * @param {int[]} range The range to replace, first item is start of range, second
  *      is end of range.
  * @param {string} text The text to insert.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function replaceTextRange(range: number[], text: string): Operation {
   return {
@@ -109,7 +112,7 @@ export function replaceTextRange(range: number[], text: string): Operation {
  * Creates a fix command that removes the node or token from the source.
  * The fix is not applied until applyFixes() is called.
  * @param {Node|Token} nodeOrToken The node or token to remove.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function remove(nodeOrToken: Node | Token): Operation {
   return removeRange(nodeOrToken.range)
@@ -120,7 +123,7 @@ export function remove(nodeOrToken: Node | Token): Operation {
  * The fix is not applied until applyFixes() is called.
  * @param {int[]} range The range to remove, first item is start of range, second
  *      is end of range.
- * @returns {Object} The fix command.
+ * @returns {Operation} The fix command.
  */
 export function removeRange(range: number[]): Operation {
   return {
@@ -133,7 +136,7 @@ export function removeRange(range: number[]): Operation {
  * Get text of Node
  * @param {Node} node The node to get text
  * @param {string} source The full text of the source code
- * @returns {string} The text of the node
+ * @returns {Operation} The text of the node
  */
 export function getText(node: Node, source: string): string {
   const start = node?.range[0]

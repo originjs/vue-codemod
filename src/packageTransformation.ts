@@ -49,11 +49,8 @@ const globalAddConfig: {
 }
 
 /**
- * Creates a fix command that inserts text at the specified index in the source text.
- * @param {int} index The 0-based index at which to insert the new text.
- * @param {string} text The text to insert.
- * @returns {Object} The fix command.
- * @private
+ * Upgrade the package.json file
+ * @returns Whether the conversion was successful
  */
 export function transform(): boolean {
   debug('Find package.json.')
