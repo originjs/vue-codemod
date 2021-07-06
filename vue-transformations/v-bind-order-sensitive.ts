@@ -4,14 +4,20 @@ import type { Operation } from '../src/operationUtils'
 import type { VueASTTransformation } from '../src/wrapVueTransformation'
 import * as parser from 'vue-eslint-parser'
 import wrap from '../src/wrapVueTransformation'
+import { getCntFunc } from './report'
 
 export const transformAST: VueASTTransformation = context => {
+  const cntFunc = getCntFunc('v-bind-order-sensitive')
   let fixOperations: Operation[] = []
   const { file } = context
   const source = file.source
   const toFixNodes: Node[] = findNodes(source)
   toFixNodes.forEach(node => {
-    fixOperations = fixOperations.concat(fix(node, source))
+    const operations = fix(node, source)
+    if (operations.length) {
+      cntFunc()
+      fixOperations = fixOperations.concat(operations)
+    }
   })
   return fixOperations
 }

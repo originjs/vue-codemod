@@ -7,6 +7,7 @@ export type GlobalApi = {
 declare global {
   // Use to add global variables used by components to main.js
   var globalApi: GlobalApi[]
+  var outputReport: { [key: string]: number; }
 }
 
 export {}

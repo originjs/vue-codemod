@@ -86,6 +86,7 @@ async function main() {
 
   // init global params
   global.globalApi = []
+  global.outputReport = {}
 
   const resolvedPaths = globby.sync(files as string[])
   if (transformationName != undefined) {
@@ -130,6 +131,7 @@ async function main() {
   console.log(`--------------------------------------------------`)
   console.log(`Processed file:\n${processFilePathList}`)
   console.log(`Processed ${processFilePath.length} files`)
+  console.log(global.outputReport)
 }
 /**
  * process files by Transformation

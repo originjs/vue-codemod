@@ -4,12 +4,18 @@ import type { Operation } from '../src/operationUtils'
 import type { VueASTTransformation } from '../src/wrapVueTransformation'
 import * as parser from 'vue-eslint-parser'
 import wrap from '../src/wrapVueTransformation'
+import { getCntFunc } from './report'
 
 export const transformAST: VueASTTransformation = context => {
+  const cntFunc = getCntFunc('slot-default')
   let fixOperations: Operation[] = []
   const toFixNodes: Node[] = findNodes(context)
   toFixNodes.forEach(node => {
-    fixOperations = fixOperations.concat(fix(node))
+    const operations = fix(node)
+    if (operations.length) {
+      cntFunc()
+      fixOperations = fixOperations.concat(operations)
+    }
   })
   return fixOperations
 }

@@ -4,14 +4,20 @@ import type { Operation } from '../src/operationUtils'
 import type { VueASTTransformation } from '../src/wrapVueTransformation'
 import * as parser from 'vue-eslint-parser'
 import wrap from '../src/wrapVueTransformation'
+import { getCntFunc } from './report'
 
 export const transformAST: VueASTTransformation = context => {
+  const cntFunc = getCntFunc('router-view-transition-keep-alive')
   let fixOperations: Operation[] = []
   const { file } = context
   const source = file.source
   const toFixNodes: Node[] = findNodes(context)
   toFixNodes.forEach(node => {
-    fixOperations = fixOperations.concat(fix(node, source))
+    const operations = fix(node, source)
+    if (operations.length) {
+      cntFunc()
+      fixOperations = fixOperations.concat(operations)
+    }
   })
   return fixOperations
 }

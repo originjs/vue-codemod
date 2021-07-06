@@ -5,6 +5,7 @@ import type { Operation } from '../src/operationUtils'
 import type { VueASTTransformation } from '../src/wrapVueTransformation'
 import wrap from '../src/wrapVueTransformation'
 import createDebug from 'debug'
+import { getCntFunc } from './report'
 
 const debug = createDebug('vue-codemod:rule')
 
@@ -17,11 +18,16 @@ const debug = createDebug('vue-codemod:rule')
  */
 
 export const transformAST: VueASTTransformation = context => {
+  const cntFunc = getCntFunc('remove-v-on-native')
   let fixOperations: Operation[] = []
   const toFixNodes: Node[] = findNodes(context)
   toFixNodes.forEach(node => {
     // fix(node) 返回的为 Operation 数组，因此用 concat 合并多个数组
-    fixOperations = fixOperations.concat(fix(node))
+    const operations = fix(node)
+    if (operations.length) {
+      cntFunc()
+      fixOperations = fixOperations.concat(operations)
+    }
   })
   return fixOperations
 }
