@@ -46,7 +46,7 @@ function fix(node: Node, source: string): Operation[] {
   // get tag attribute and event attribute value
   // get other attribute text
   let tagValue, eventValue
-  let attrText = ''
+  let attrTexts: string[] = []
   node.startTag.attributes.forEach(attr => {
     if (attr.type === 'VAttribute') {
       const name = attr.key.name
@@ -55,10 +55,11 @@ function fix(node: Node, source: string): Operation[] {
       } else if (name === 'event' && attr.value?.type === 'VLiteral') {
         eventValue = attr.value.value
       } else {
-        attrText += OperationUtils.getText(attr, source)
+        attrTexts.push(OperationUtils.getText(attr, source))
       }
     }
   })
+  const attrText = attrTexts.join(' ')
 
   if (tagValue || eventValue) {
     // convert event attribute to new syntax
