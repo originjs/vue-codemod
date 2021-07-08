@@ -6,7 +6,6 @@ import Module from 'module'
 
 import * as yargs from 'yargs'
 import * as globby from 'globby'
-import * as util from 'util'
 
 import createDebug from 'debug'
 import { question } from 'readline-sync'
@@ -150,9 +149,14 @@ function processTransformation(
   const extensions = ['.js', '.ts', '.vue', '.jsx', '.tsx']
   for (const p of resolvedPaths) {
     debug(`Processing ${p}…`)
+    let retainedSource: string = fs
+      .readFileSync(p)
+      .toString()
+      .split('\r\n')
+      .join('\n')
     const fileInfo = {
       path: p,
-      source: fs.readFileSync(p).toString().split('\r\n').join('\n')
+      source: retainedSource
     }
     const extension = (/\.([^.]*)$/.exec(fileInfo.path) || [])[0]
     if (!extensions.includes(extension)) {
@@ -167,10 +171,12 @@ function processTransformation(
         params as object
       )
 
-      if (fileInfo.source != result) {
+      if (retainedSource != result) {
         fs.writeFileSync(p, result)
-        if (util.inspect(processFilePath).indexOf(util.inspect(p)) == -1) {
+        if (processFilePath.indexOf(p) == -1) {
           processFilePath.push(p)
+        } else {
+          debug(`Skip this file ${p} because of duplicate statistics`)
         }
       }
     } catch (e) {
