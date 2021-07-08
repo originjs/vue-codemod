@@ -34,11 +34,9 @@ export const transformAST: ASTTransformation<Params | void> = (
       return node.arguments.length > 0
     })
 
-  if (newVue.length) {
-    cntFunc()
-  }
   // new Vue() -> Vue.createApp()
   newVue.replaceWith(({ node }) => {
+    cntFunc()
     const rootProps = node.arguments
     return j.callExpression(
       j.memberExpression(j.identifier('Vue'), j.identifier('createApp')),

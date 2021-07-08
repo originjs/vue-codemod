@@ -87,6 +87,7 @@ async function main() {
   // init global params
   global.globalApi = []
   global.outputReport = {}
+  global.subRules = {}
 
   const resolvedPaths = globby.sync(files as string[])
   if (transformationName != undefined) {

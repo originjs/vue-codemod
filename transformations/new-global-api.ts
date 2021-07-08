@@ -14,7 +14,9 @@ import { transformAST as removeExtraneousImport } from './remove-extraneous-impo
 import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
-  const beforeCount = subRules['new-vue-to-create-app'] + subRules['remove-contextual-h-from-render']
+  const newVueCount = subRules['new-vue-to-create-app'] ? subRules['new-vue-to-create-app'] : 0
+  const remHCount = subRules['remove-contextual-h-from-render'] ? subRules['remove-contextual-h-from-render'] : 0
+  const beforeCount = newVueCount + remHCount
   vueAsNamespaceImport(context)
   importCompositionApiFromVue(context)
   newVueTocreateApp(context)

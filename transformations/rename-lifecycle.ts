@@ -23,8 +23,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
         ) {
           // @ts-ignore
           path.value.key.name = afterReplaceName
+          cntFunc()
         }
-        cntFunc()
       })
     }
   })
