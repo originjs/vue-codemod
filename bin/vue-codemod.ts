@@ -6,7 +6,6 @@ import Module from 'module'
 
 import * as yargs from 'yargs'
 import * as globby from 'globby'
-import * as util from 'util'
 
 import createDebug from 'debug'
 import { question } from 'readline-sync'
@@ -166,8 +165,10 @@ function processTransformation(
 
       if (fileInfo.source != result) {
         fs.writeFileSync(p, result)
-        if (util.inspect(processFilePath).indexOf(util.inspect(p)) == -1) {
+        if (processFilePath.indexOf(p) == -1) {
           processFilePath.push(p)
+        } else {
+          debug(`Skip this file ${p} because of duplicate statistics`)
         }
       }
     } catch (e) {
