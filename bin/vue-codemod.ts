@@ -146,9 +146,14 @@ function processTransformation(
   const extensions = ['.js', '.ts', '.vue', '.jsx', '.tsx']
   for (const p of resolvedPaths) {
     debug(`Processing ${p}…`)
+    let retainedSource: string = fs
+      .readFileSync(p)
+      .toString()
+      .split('\r\n')
+      .join('\n')
     const fileInfo = {
       path: p,
-      source: fs.readFileSync(p).toString().split('\r\n').join('\n')
+      source: retainedSource
     }
     const extension = (/\.([^.]*)$/.exec(fileInfo.path) || [])[0]
     if (!extensions.includes(extension)) {
@@ -163,7 +168,7 @@ function processTransformation(
         params as object
       )
 
-      if (fileInfo.source != result) {
+      if (retainedSource != result) {
         fs.writeFileSync(p, result)
         if (processFilePath.indexOf(p) == -1) {
           processFilePath.push(p)
