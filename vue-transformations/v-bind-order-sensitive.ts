@@ -4,7 +4,7 @@ import type { Operation } from '../src/operationUtils'
 import type { VueASTTransformation } from '../src/wrapVueTransformation'
 import * as parser from 'vue-eslint-parser'
 import wrap from '../src/wrapVueTransformation'
-import { getCntFunc } from './report'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: VueASTTransformation = context => {
   const cntFunc = getCntFunc('v-bind-order-sensitive')

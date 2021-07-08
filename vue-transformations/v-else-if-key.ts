@@ -5,7 +5,7 @@ import type { Operation } from '../src/operationUtils'
 import type { VueASTTransformation } from '../src/wrapVueTransformation'
 import wrap from '../src/wrapVueTransformation'
 import createDebug from 'debug'
-import { getCntFunc } from './report'
+import { getCntFunc } from '../src/report'
 
 const debug = createDebug('vue-codemod:rule')
 

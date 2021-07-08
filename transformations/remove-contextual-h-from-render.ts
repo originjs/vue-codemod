@@ -4,9 +4,12 @@ import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 import { transformAST as addImport } from './add-import'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j } = context
+  // stats
+  const cntFunc = getCntFunc('remove-contextual-h-from-render', subRules)
   const renderFns = root.find(j.ObjectProperty, n => {
     return (
       n.key.name === 'render' &&
@@ -36,6 +39,9 @@ export const transformAST: ASTTransformation = context => {
     renderMethods.forEach(({ node }) => {
       node.params.shift()
     })
+
+    // stats
+    cntFunc()
   }
 }
 

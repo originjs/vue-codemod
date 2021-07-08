@@ -3,10 +3,13 @@ import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 import { transformAST as addImport } from './add-import'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
+import { getCntFunc } from '../src/report'
 
 // new Store() -> createStore()
 export const transformAST: ASTTransformation = context => {
   const { j, root } = context
+  // stats
+  const cntFunc = getCntFunc('vue-router-v4')
 
   const vuexImportDecls = root.find(j.ImportDeclaration, {
     source: {
@@ -51,6 +54,7 @@ export const transformAST: ASTTransformation = context => {
           node.arguments
         )
       })
+      cntFunc()
     }
   }
 
@@ -74,6 +78,7 @@ export const transformAST: ASTTransformation = context => {
       return j.callExpression(j.identifier('createStore'), node.arguments)
     })
     removeExtraneousImport(context, { localBinding: localStore })
+    cntFunc()
   }
 }
 

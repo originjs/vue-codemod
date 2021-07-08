@@ -10,6 +10,8 @@ export type ASTTransformation<Params = void> = {
   (context: Context, params: Params): void
 }
 
+global.subRules = {}
+
 export default function astTransformationToJSCodeshiftModule<Params = any>(
   transformAST: ASTTransformation<Params>
 ): Transform {
