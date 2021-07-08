@@ -9,7 +9,7 @@ import { getCntFunc } from '../src/report'
 export const transformAST: ASTTransformation = context => {
   const { j, root } = context
   // stats
-  const cntFunc = getCntFunc('vue-router-v4')
+  const cntFunc = getCntFunc('vuex-v4')
 
   const vuexImportDecls = root.find(j.ImportDeclaration, {
     source: {

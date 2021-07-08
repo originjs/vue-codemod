@@ -7,7 +7,7 @@ import wrap from '../src/wrapVueTransformation'
 import { getCntFunc } from '../src/report'
 
 export const transformAST: VueASTTransformation = context => {
-  const cntFunc = getCntFunc('router-view-transition-keep-alive')
+  const cntFunc = getCntFunc('router-view-keep-alive-transition')
   let fixOperations: Operation[] = []
   const { file } = context
   const source = file.source

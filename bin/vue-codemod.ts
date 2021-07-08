@@ -100,6 +100,7 @@ async function main() {
     )
     if (packageTransform()) {
       processFilePath.push('package.json')
+      outputReport['package.json'] = 1
     }
   }
 
@@ -132,6 +133,8 @@ async function main() {
   console.log(`--------------------------------------------------`)
   console.log(`Processed file:\n${processFilePathList}`)
   console.log(`Processed ${processFilePath.length} files`)
+  const totalChange = Object.keys(outputReport).reduce( (sum, key) => sum + outputReport[key], 0)
+  console.log('totalChange',totalChange)
   console.log(global.outputReport)
 }
 /**
