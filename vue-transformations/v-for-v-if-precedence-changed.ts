@@ -7,7 +7,7 @@ import wrap from '../src/wrapVueTransformation'
 import { getCntFunc } from './report'
 
 export const transformAST: VueASTTransformation = context => {
-  const cntFunc = getCntFunc('remove-v-on-native')
+  const cntFunc = getCntFunc('v-for-v-if-precedence-changed')
   let fixOperations: Operation[] = []
   const { file } = context
   const source = file.source

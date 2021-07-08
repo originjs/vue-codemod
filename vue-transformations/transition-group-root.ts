@@ -18,7 +18,7 @@ const debug = createDebug('vue-codemod:rule')
  */
 
 export const transformAST: VueASTTransformation = context => {
-  const cntFunc = getCntFunc('remove-v-on-native')
+  const cntFunc = getCntFunc('transition-group-root')
   let fixOperations: Operation[] = []
   const toFixNodes: Node[] = findNodes(context)
   toFixNodes.forEach(node => {
