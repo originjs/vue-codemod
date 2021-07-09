@@ -27,6 +27,7 @@ const {
   _: files,
   transformation: transformationName,
   runAllTransformation: runAllTransformation,
+  formatter: formatter,
   params
 } = yargs
   .usage('Usage: vue-codemod [file pattern] <option>')
@@ -45,6 +46,12 @@ const {
     type: 'boolean',
     conflicts: 'transformation',
     describe: 'run all transformation module'
+  })
+  .option('formatter', {
+    alias: 'f',
+    type: 'string',
+    describe: 'Specify a formatter',
+    default: 'detail'
   })
   .example([
     [
@@ -132,9 +139,33 @@ async function main() {
   console.log(`--------------------------------------------------`)
   console.log(`Processed file:\n${processFilePathList}`)
   console.log(`Processed ${processFilePath.length} files`)
-  const totalChange = Object.keys(outputReport).reduce( (sum, key) => sum + outputReport[key], 0)
-  console.log('totalChange',totalChange)
-  console.log(global.outputReport)
+  const totalChanged = Object.keys(outputReport).reduce( (sum, key) => sum + outputReport[key], 0)
+  const totalDetected = totalChanged  // Developing by Yingkun
+  const transRate = 100 * totalChanged / totalDetected
+  console.log('\x1B[44;37;4m%s\x1B[0m',`${totalDetected} places`,`need to be transformed`)
+  console.log('\x1B[44;37;4m%s\x1B[0m',`${totalChanged} places`,`was transformed`)
+  console.log(`The transformation rate is \x1B[44;37;4m${transRate}%\x1B[0m`)
+
+  if (formatter === 'detail') console.log('The transformation stats: \n', outputReport)
+
+  if (formatter === 'log') {
+    let options = {
+      flags: 'w', //
+      encoding: 'utf8', // utf8编码
+    }
+
+    let stdout = fs.createWriteStream('./vue_codemod.log', options);
+
+    let logger = new console.Console(stdout);
+
+    logger.log(`--------------------------------------------------`)
+    logger.log(`Processed file:\n${processFilePathList}\n`)
+    logger.log(`Processed ${processFilePath.length} files`)
+    logger.log(`${totalDetected} places`,`need to be transformed`)
+    logger.log(`${totalChanged} places`,`was transformed`)
+    logger.log(`The transformation rate is ${transRate}%`)
+    logger.log('The transformation stats: \n', outputReport)
+  }
 }
 /**
  * process files by Transformation
