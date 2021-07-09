@@ -1,46 +1,22 @@
 import { Node, VElement } from 'vue-eslint-parser/ast/nodes'
 import * as OperationUtils from '../src/operationUtils'
 import type { Operation } from '../src/operationUtils'
-import type { VueASTTransformation } from '../src/wrapVueTransformation'
-import * as parser from 'vue-eslint-parser'
-import wrap from '../src/wrapVueTransformation'
+import {
+  default as wrap,
+  createTransformAST
+} from '../src/wrapVueTransformation'
 
-export const transformAST: VueASTTransformation = context => {
-  let fixOperations: Operation[] = []
-  const { file } = context
-  const source = file.source
-  const toFixNodes: Node[] = findNodes(context)
-  toFixNodes.forEach(node => {
-    fixOperations = fixOperations.concat(fix(node, source))
-  })
-  return fixOperations
-}
+export const transformAST = createTransformAST(nodeFilter, fix)
 
 export default wrap(transformAST)
 
-function findNodes(context: any): Node[] {
-  const { file } = context
-  const source = file.source
-  const options = { sourceType: 'module' }
-  const ast = parser.parse(source, options)
-  let toFixNodes: Node[] = []
-  let root: Node = <Node>ast.templateBody
-
-  // find transition nodes
-  parser.AST.traverseNodes(root, {
-    enterNode(node: Node) {
-      if (
-        node.type === 'VElement' &&
-        node.name === 'transition' &&
-        node.children.length
-      ) {
-        toFixNodes.push(node)
-      }
-    },
-    leaveNode(node: Node) {}
-  })
-
-  return toFixNodes
+function nodeFilter(node: Node): boolean {
+  // filter for transition node
+  return (
+    node.type === 'VElement' &&
+    node.name === 'transition' &&
+    node.children.length > 0
+  )
 }
 
 function fix(node: Node, source: string): Operation[] {

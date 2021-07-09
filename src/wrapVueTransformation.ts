@@ -1,6 +1,7 @@
-import * as _ from 'lodash'
 import type { Operation } from './operationUtils'
 import type VueTransformation from './VueTransformation'
+import { Node } from 'vue-eslint-parser/ast/nodes'
+import * as parser from 'vue-eslint-parser'
 
 const BOM = '\uFEFF'
 
@@ -16,6 +17,44 @@ export type Context = {
 export type VueASTTransformation<Params = void> = {
   (context: Context, params: Params): Operation[]
   type?: string
+}
+
+export function createTransformAST(
+  nodeFilter: (node: Node) => boolean,
+  fix: (node: Node, source?: string) => Operation[]
+) {
+  function findNodes(context: any): Node[] {
+    const { file } = context
+    const source = file.source
+    const options = { sourceType: 'module' }
+    const ast = parser.parse(source, options)
+    let toFixNodes: Node[] = []
+    let root: Node = <Node>ast.templateBody
+
+    parser.AST.traverseNodes(root, {
+      enterNode(node: Node) {
+        if (nodeFilter(node)) {
+          toFixNodes.push(node)
+        }
+      },
+      leaveNode(node: Node) {}
+    })
+
+    return toFixNodes
+  }
+
+  const transformAST: VueASTTransformation = context => {
+    let fixOperations: Operation[] = []
+    const { file } = context
+    const source = file.source
+    const toFixNodes: Node[] = findNodes(context)
+    toFixNodes.forEach(node => {
+      fixOperations = fixOperations.concat(fix(node, source))
+    })
+    return fixOperations
+  }
+
+  return transformAST
 }
 
 export default function astTransformationToVueTransformationModule<

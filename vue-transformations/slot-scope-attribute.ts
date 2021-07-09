@@ -1,49 +1,24 @@
 import { Node } from 'vue-eslint-parser/ast/nodes'
 import * as OperationUtils from '../src/operationUtils'
 import type { Operation } from '../src/operationUtils'
-import type { VueASTTransformation } from '../src/wrapVueTransformation'
-import * as parser from 'vue-eslint-parser'
-import wrap from '../src/wrapVueTransformation'
+import {
+  default as wrap,
+  createTransformAST
+} from '../src/wrapVueTransformation'
 
-export const transformAST: VueASTTransformation = context => {
-  let fixOperations: Operation[] = []
-  const toFixNodes: Node[] = findNodes(context)
-  const { file } = context
-  const source = file.source
-  toFixNodes.forEach(node => {
-    fixOperations = fixOperations.concat(fix(node, source))
-  })
-  return fixOperations
-}
+export const transformAST = createTransformAST(nodeFilter, fix)
 
 export default wrap(transformAST)
-/**
- * search slot attribute nodes
- *
- * @param context
- * @returns slot attribute nodes
- */
-function findNodes(context: any): Node[] {
-  const { file } = context
-  const source = file.source
-  const options = { sourceType: 'module' }
-  const ast = parser.parse(source, options)
-  let toFixNodes: Node[] = []
-  let root: Node = <Node>ast.templateBody
-  parser.AST.traverseNodes(root, {
-    enterNode(node: Node) {
-      if (
-        node.type === 'VAttribute' &&
-        node.directive &&
-        node.key.name.name === 'slot-scope'
-      ) {
-        toFixNodes.push(node)
-      }
-    },
-    leaveNode(node: Node) {}
-  })
-  return toFixNodes
+
+function nodeFilter(node: Node): boolean {
+  // filter for slot attribute node
+  return (
+    node.type === 'VAttribute' &&
+    node.directive &&
+    node.key.name.name === 'slot-scope'
+  )
 }
+
 /**
  * fix logic
  * @param node
