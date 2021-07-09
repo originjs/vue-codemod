@@ -1,4 +1,4 @@
-export function getCntFunc(key: string, outputObj: { [key: string]: number; } = outputReport ) {
+export function getCntFunc(key: string, outputObj: { [key: string]: number; } = global.outputReport ) {
     if (!outputObj.hasOwnProperty(key)) {
         outputObj[key] = 0
     }

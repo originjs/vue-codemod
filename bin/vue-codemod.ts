@@ -139,7 +139,7 @@ async function main() {
   console.log(`--------------------------------------------------`)
   console.log(`Processed file:\n${processFilePathList}`)
   console.log(`Processed ${processFilePath.length} files`)
-  const totalChanged = Object.keys(outputReport).reduce( (sum, key) => sum + outputReport[key], 0)
+  const totalChanged = Object.keys(global.outputReport).reduce( (sum, key) => sum + global.outputReport[key], 0)
   const totalDetected = totalChanged  // Developing by Yingkun
   const transRate = 100 * totalChanged / totalDetected
   console.log('\x1B[44;37;4m%s\x1B[0m',`${totalDetected} places`,`need to be transformed`)
@@ -164,7 +164,7 @@ async function main() {
     logger.log(`${totalDetected} places`,`need to be transformed`)
     logger.log(`${totalChanged} places`,`was transformed`)
     logger.log(`The transformation rate is ${transRate}%`)
-    logger.log('The transformation stats: \n', outputReport)
+    logger.log('The transformation stats: \n', global.outputReport)
   }
 }
 /**
