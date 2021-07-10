@@ -6,7 +6,11 @@ import {
   createTransformAST
 } from '../src/wrapVueTransformation'
 
-export const transformAST = createTransformAST(nodeFilter, fix)
+export const transformAST = createTransformAST(
+  nodeFilter,
+  fix,
+  'remove-v-on-native'
+)
 
 export default wrap(transformAST)
 

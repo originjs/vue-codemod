@@ -6,10 +6,11 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import type * as N from 'jscodeshift'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j } = context
-
+  const cntFunc = getCntFunc('remove-vue-set-and-delete', global.outputReport)
   const isVue = (node: N.ASTNode) => {
     return j.Identifier.check(node) && node.name === 'Vue'
   }
@@ -84,6 +85,7 @@ export const transformAST: ASTTransformation = context => {
 
     const prop = (node.callee as N.MemberExpression).property as N.Identifier
     if (prop.name === '$set' || prop.name === 'set') {
+      cntFunc()
       return j.assignmentExpression(
         '=',
         // @ts-ignore
@@ -94,6 +96,7 @@ export const transformAST: ASTTransformation = context => {
     }
 
     if (prop.name === '$delete' || prop.name === 'delete') {
+      cntFunc()
       return j.unaryExpression(
         'delete',
         // @ts-ignore

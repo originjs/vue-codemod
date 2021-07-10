@@ -1,8 +1,10 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import type { ObjectProperty } from 'jscodeshift'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = ({ j, root }) => {
+  const cntFunc = getCntFunc('v-model', global.outputReport)
   // find model option
   const modelCollection = root
     .find(j.ObjectProperty, node => node.key.name === 'model')
@@ -43,7 +45,7 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
   modelCollection.remove()
 
   if (!valueNodePath.length) return
-
+  cntFunc()
   // replace the value with modelValue
   // @ts-ignore
   valueNodePath.get(0).node.key.name = 'modelValue'

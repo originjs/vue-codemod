@@ -6,7 +6,11 @@ import {
   createTransformAST
 } from '../src/wrapVueTransformation'
 
-export const transformAST = createTransformAST(nodeFilter, fix)
+export const transformAST = createTransformAST(
+  nodeFilter,
+  fix,
+  'v-bind-order-sensitive'
+)
 
 export default wrap(transformAST)
 

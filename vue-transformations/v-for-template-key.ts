@@ -8,7 +8,11 @@ import {
   createTransformAST
 } from '../src/wrapVueTransformation'
 
-export const transformAST = createTransformAST(nodeFilter, fix)
+export const transformAST = createTransformAST(
+  nodeFilter,
+  fix,
+  'v-for-template-key'
+)
 
 export default wrap(transformAST)
 

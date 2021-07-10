@@ -6,7 +6,11 @@ import {
   createTransformAST
 } from '../src/wrapVueTransformation'
 
-export const transformAST = createTransformAST(nodeFilter, fix)
+export const transformAST = createTransformAST(
+  nodeFilter,
+  fix,
+  'router-view-keep-alive-transition'
+)
 
 export default wrap(transformAST)
 

@@ -11,8 +11,16 @@ import { transformAST as removeVueUse } from './remove-vue-use'
 import { transformAST as removeContextualHFromRender } from './remove-contextual-h-from-render'
 
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
+  const newVueCount = subRules['new-vue-to-create-app']
+    ? subRules['new-vue-to-create-app']
+    : 0
+  const remHCount = subRules['remove-contextual-h-from-render']
+    ? subRules['remove-contextual-h-from-render']
+    : 0
+  const beforeCount = newVueCount + remHCount
   vueAsNamespaceImport(context)
   importCompositionApiFromVue(context)
   newVueTocreateApp(context)
@@ -29,11 +37,17 @@ export const transformAST: ASTTransformation = context => {
   removeVueUse(context, {
     removablePlugins: ['VueRouter', 'Vuex', 'VueCompositionApi', 'VueI18n']
   })
-  removeContextualHFromRender(context)
+  removeContextualHFromRender(context) // count
 
   removeExtraneousImport(context, { localBinding: 'Vue' })
   removeExtraneousImport(context, { localBinding: 'Vuex' })
   removeExtraneousImport(context, { localBinding: 'VueRouter' })
+  const afterCount =
+    subRules['new-vue-to-create-app'] +
+    subRules['remove-contextual-h-from-render']
+  const change = afterCount - beforeCount
+  const cntFunc = getCntFunc('new-global-api', outputReport)
+  cntFunc(change)
 }
 
 export default wrap(transformAST)

@@ -1,7 +1,9 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
+  const cntFunc = getCntFunc('global-filter', global.outputReport)
   // find the createApp()
   const appDeclare = root.find(j.VariableDeclarator, {
     id: { type: 'Identifier' },
@@ -53,6 +55,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
     return
   }
 
+  cntFunc()
   const methods = []
   for (let i = 0; i < filters.length; i++) {
     const filter = filters.at(i)

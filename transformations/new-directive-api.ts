@@ -1,5 +1,6 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
+import { getCntFunc } from '../src/report'
 
 const hookNameMap: { [key: string]: string } = {
   bind: 'beforeMount',
@@ -9,6 +10,7 @@ const hookNameMap: { [key: string]: string } = {
 }
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
+  const cntFunc = getCntFunc('new-directive-api', global.outputReport)
   const directiveRegistration = root.find(j.CallExpression, {
     callee: {
       type: 'MemberExpression',
@@ -40,6 +42,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
 
         if (hookNameMap[prop.key.name]) {
           prop.key.name = hookNameMap[prop.key.name]
+          cntFunc()
         }
         if (prop.key.name === 'update') {
           updateIndex = index

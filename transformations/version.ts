@@ -1,5 +1,6 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find Vue.version
@@ -25,6 +26,10 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
       const property = node.property.name
       return j.identifier(property)
     })
+
+    // stats
+    const cntFunc = getCntFunc('version', subRules)
+    cntFunc()
   }
 }
 

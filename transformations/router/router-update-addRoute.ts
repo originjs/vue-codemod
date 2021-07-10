@@ -1,9 +1,11 @@
 import wrap from '../../src/wrapAstTransformation'
 import type { ASTTransformation } from '../../src/wrapAstTransformation'
+import { getCntFunc } from '../../src/report'
 
 // addRoute() addRoutes()-> forEach addRoute
 export const transformAST: ASTTransformation = context => {
   const { root, j } = context
+  const cntFunc = getCntFunc('router-update-addRoute', global.outputReport)
   const addRouteExpression = root.find(j.CallExpression, {
     callee: {
       type: 'MemberExpression',
@@ -51,7 +53,7 @@ export const transformAST: ASTTransformation = context => {
       if (arrowFun.length) {
         return node
       }
-
+      cntFunc()
       return j.callExpression(
         j.memberExpression(routerArgs, j.identifier('forEach')),
         [

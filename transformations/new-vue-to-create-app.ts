@@ -2,6 +2,7 @@ import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 import type * as N from 'jscodeshift'
+import { getCntFunc } from '../src/report'
 
 type Params = {
   // if false, do not take expressions like `new HelloWorld().$mount` or
@@ -21,7 +22,7 @@ export const transformAST: ASTTransformation<Params | void> = (
 ) => {
   const { j, root } = context
   const { includeMaybeComponents = true } = params
-
+  const cntFunc = getCntFunc('new-vue-to-create-app', subRules)
   const newVue = root
     .find(j.NewExpression, {
       callee: {
@@ -35,6 +36,7 @@ export const transformAST: ASTTransformation<Params | void> = (
 
   // new Vue() -> Vue.createApp()
   newVue.replaceWith(({ node }) => {
+    cntFunc()
     const rootProps = node.arguments
     return j.callExpression(
       j.memberExpression(j.identifier('Vue'), j.identifier('createApp')),

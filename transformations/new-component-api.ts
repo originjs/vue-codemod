@@ -3,9 +3,11 @@ import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 import type { GlobalApi } from '../src/global'
 import * as _ from 'lodash'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j, filename } = context
+  const cntFunc = getCntFunc('new-component-api', global.outputReport)
   const rootExpressionStatement = root
     .find(j.ExpressionStatement)
     .filter(path => path.parent.value.type === 'Program')
@@ -34,6 +36,7 @@ export const transformAST: ASTTransformation = context => {
     if (node.arguments.length === 2) {
       componentArgs = node.arguments
       let componentApi: GlobalApi
+      cntFunc()
       if (j.Identifier.check(componentArgs[1])) {
         componentApi = { name: componentArgs[1].name, path: filename }
       } else {

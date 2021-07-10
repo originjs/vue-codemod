@@ -1,8 +1,10 @@
 import wrap from '../../src/wrapAstTransformation'
 import type { ASTTransformation } from '../../src/wrapAstTransformation'
+import { getCntFunc } from '../../src/report'
 
 // router.onReady(succes,err) => router.isReady().then(succes).catch(error)
 export const transformAST: ASTTransformation = ({ j, root }) => {
+  const cntFunc = getCntFunc('router4-onready-to-isready', global.outputReport)
   // find onReady
   const readyExpresstion = root.find(j.CallExpression, {
     callee: {
@@ -32,7 +34,7 @@ export const transformAST: ASTTransformation = ({ j, root }) => {
     if (params.length == 1) {
       return successFn
     }
-
+    cntFunc()
     return j.callExpression(
       j.memberExpression(successFn, j.identifier('catch')),
       [params[1]]

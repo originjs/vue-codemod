@@ -18,6 +18,7 @@ import runTransformation from '../src/runTransformation'
 import { transform as packageTransform } from '../src/packageTransformation'
 
 import type { TransformationModule } from '../src/runTransformation'
+import { formatterOutput } from '../src/report'
 
 const debug = createDebug('vue-codemod:cli')
 const log = console.log.bind(console)
@@ -27,6 +28,7 @@ const {
   _: files,
   transformation: transformationName,
   runAllTransformation: runAllTransformation,
+  reportFormatter: formatter,
   params
 } = yargs
   .usage('Usage: vue-codemod [file pattern] <option>')
@@ -45,6 +47,12 @@ const {
     type: 'boolean',
     conflicts: 'transformation',
     describe: 'run all transformation module'
+  })
+  .option('reportFormatter', {
+    alias: 'f',
+    type: 'string',
+    describe: 'Specify an output report formatter',
+    default: 'detail'
   })
   .example([
     [
@@ -85,6 +93,7 @@ async function main() {
 
   // init global params
   global.globalApi = []
+  global.outputReport = {}
 
   const resolvedPaths = globby.sync(files as string[])
   if (transformationName != undefined) {
@@ -97,6 +106,7 @@ async function main() {
     )
     if (packageTransform()) {
       processFilePath.push('package.json')
+      global.outputReport['package.json'] = 1
     }
   }
 
@@ -125,10 +135,8 @@ async function main() {
       processFilePath.push('package.json')
     }
   }
-  const processFilePathList = processFilePath.join('\n')
-  console.log(`--------------------------------------------------`)
-  console.log(`Processed file:\n${processFilePathList}`)
-  console.log(`Processed ${processFilePath.length} files`)
+
+  formatterOutput(processFilePath, formatter)
 }
 /**
  * process files by Transformation

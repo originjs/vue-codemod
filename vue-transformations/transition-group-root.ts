@@ -9,7 +9,11 @@ import {
 
 const debug = createDebug('vue-codemod:rule')
 
-export const transformAST = createTransformAST(nodeFilter, fix)
+export const transformAST = createTransformAST(
+  nodeFilter,
+  fix,
+  'transition-group-root'
+)
 
 export default wrap(transformAST)
 

@@ -1,10 +1,12 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find the export default
   const defaultExportBody = root.find(j.ExportDefaultDeclaration)
-
+  // stats
+  const cntFunc = getCntFunc('add-emit-declarations', global.outputReport)
   // find the CallExpression
   const emitCalls = defaultExportBody.find(j.CallExpression, node => {
     return (
@@ -47,6 +49,8 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
         .node.declaration.properties?.unshift(
           j.objectProperty(j.identifier('emits'), j.arrayExpression(elements))
         )
+
+      cntFunc()
     }
   }
 }

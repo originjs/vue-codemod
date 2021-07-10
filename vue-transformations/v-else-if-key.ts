@@ -9,7 +9,7 @@ import createDebug from 'debug'
 
 const debug = createDebug('vue-codemod:rule')
 
-export const transformAST = createTransformAST(nodeFilter, fix)
+export const transformAST = createTransformAST(nodeFilter, fix, 'v-else-if-key')
 
 export default wrap(transformAST)
 

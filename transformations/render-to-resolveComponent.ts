@@ -1,9 +1,11 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 import { transformAST as addImport } from './add-import'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = context => {
   const { root, j } = context
+  const cntFunc = getCntFunc('render-to-resolveComponent', global.outputReport)
   // find render function
   const renderCollections = root
     .find(j.ObjectMethod, node => {
@@ -31,6 +33,7 @@ export const transformAST: ASTTransformation = context => {
     })
 
     if (!callExpressionCollection.length) return
+    cntFunc()
     // find the component name
     const componentName =
       callExpressionCollection.get(0).node.arguments[0].value

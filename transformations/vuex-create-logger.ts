@@ -1,7 +1,9 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
+  const cntFunc = getCntFunc('vuex-create-logger', global.outputReport)
   //  find the import xxx from 'vuex/dist/logger'
   const importDeclarationCollection = root.find(j.ImportDeclaration, node => {
     return (
@@ -11,7 +13,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
     )
   })
   if (!importDeclarationCollection.length) return
-
+  cntFunc()
   const importName =
     importDeclarationCollection.get(0).node.specifiers[0].local.name
   if (importName !== 'createLogger') {

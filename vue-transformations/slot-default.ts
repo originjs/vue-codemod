@@ -6,7 +6,7 @@ import {
   createTransformAST
 } from '../src/wrapVueTransformation'
 
-export const transformAST = createTransformAST(nodeFilter, fix)
+export const transformAST = createTransformAST(nodeFilter, fix, 'slot-default')
 
 export default wrap(transformAST)
 

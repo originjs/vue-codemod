@@ -5,6 +5,7 @@ import { transformAST as addImport } from './add-import'
 import { transformAST as removeExtraneousImport } from './remove-extraneous-import'
 
 import type { ObjectExpression } from 'jscodeshift'
+import { getCntFunc } from '../src/report'
 
 // new Router() -> createRouter()
 export const transformAST: ASTTransformation = context => {
@@ -15,10 +16,12 @@ export const transformAST: ASTTransformation = context => {
     }
   })
 
+  // stats
+  const cntFunc = getCntFunc('vue-router-v4', global.outputReport)
   const importedVueRouter = routerImportDecls.find(j.ImportDefaultSpecifier)
   if (importedVueRouter.length) {
     const localVueRouter = importedVueRouter.get(0).node.local.name
-
+    cntFunc()
     const newVueRouter = root.find(j.NewExpression, {
       callee: {
         type: 'Identifier',

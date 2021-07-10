@@ -2,6 +2,7 @@ import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
 
 import { transformAST as addImport } from './add-import'
+import { getCntFunc } from '../src/report'
 
 /**
  * import VueI18n from 'vue-i18n' -> import { createI18n } from 'vue-i18n'
@@ -10,7 +11,7 @@ import { transformAST as addImport } from './add-import'
  */
 export const transformAST: ASTTransformation = context => {
   const { root, j } = context
-
+  const cntFunc = getCntFunc('vue-i18n-v9', global.outputReport)
   // find import
   const vueI18nImportDecls = root.find(j.ImportDeclaration, {
     source: {
@@ -28,6 +29,7 @@ export const transformAST: ASTTransformation = context => {
 
   // import VueI18n from 'vue-i18n' -> import { createI18n } from 'vue-i18n'
   if (vueI18nImportDecls) {
+    cntFunc()
     vueI18nImportDecls.remove()
     addImport(context, {
       specifier: { type: 'named', imported: 'createI18n' },

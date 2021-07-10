@@ -1,5 +1,6 @@
 import wrap from '../src/wrapAstTransformation'
 import type { ASTTransformation } from '../src/wrapAstTransformation'
+import { getCntFunc } from '../src/report'
 
 export const transformAST: ASTTransformation = ({ root, j }) => {
   // find the Vue.nextTick(...)
@@ -29,6 +30,10 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
       const el = node.arguments[0]
       return j.callExpression(j.identifier('nextTick'), [el])
     })
+
+    // stats
+    const cntFunc = getCntFunc('next-tick', subRules)
+    cntFunc()
   }
 }
 
