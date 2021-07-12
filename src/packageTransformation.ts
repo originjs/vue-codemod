@@ -1,6 +1,5 @@
-import * as fs from 'fs'
 import * as globby from 'globby'
-import * as prettier from 'prettier'
+import * as fsExtra from 'fs-extra'
 import createDebug from 'debug'
 
 const debug = createDebug('vue-codemod:rule')
@@ -60,18 +59,11 @@ export function transform(): boolean {
     return false
   }
 
-  let packageObj: any = JSON.parse(fs.readFileSync(resolvedPaths[0]).toString())
+  let packageObj: JSON = fsExtra.readJsonSync(resolvedPaths[0])
 
   packageObj = process(packageObj)
 
-  let formatted = prettier.format(
-    JSON.stringify(packageObj),
-    Object.assign(
-      { parser: 'json' },
-      packageObj?.prettier ? packageObj?.prettier : {}
-    )
-  )
-  fs.writeFileSync(resolvedPaths[0], formatted)
+  fsExtra.writeJsonSync(resolvedPaths[0], packageObj, { spaces: 2 })
   return true
 }
 /**
