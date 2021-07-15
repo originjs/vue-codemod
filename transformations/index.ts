@@ -42,6 +42,8 @@ const transformationMap: {
   'router4-onready-to-isready': require('./router/router4-onready-to-isready'),
   'router-update-addRoute': require('./router/router-update-addRoute'),
 
+  'const-app': require('./const-app'),
+
   // manual (must be used at the end of list)
   'manual-remove-Vue': require('./manual/manual-remove-Vue'),
   'manual-remove-VueRouter': require('./manual/manual-remove-VueRouter'),
