@@ -40,7 +40,15 @@ const transformationMap: {
   'remove-extraneous-import': require('./remove-extraneous-import'),
 
   'router4-onready-to-isready': require('./router/router4-onready-to-isready'),
-  'router-update-addRoute': require('./router/router-update-addRoute')
+  'router-update-addRoute': require('./router/router-update-addRoute'),
+
+  // manual (must be used at the end of list)
+  'manual-remove-Vue': require('./manual/manual-remove-Vue'),
+  'manual-remove-VueRouter': require('./manual/manual-remove-VueRouter'),
+  'manual-remove-on-off-once': require('./manual/manual-remove-on-off-once'),
+  'manual-remove-router-star': require('./manual/manual-remove-router-star'),
+  'manual-remove-config-keycodes': require('./manual/manual-remove-config-keycodes'),
+  'manual-remove-filter': require('./manual/manual-remove-filter')
 }
 
 export const excludedTransformations = [

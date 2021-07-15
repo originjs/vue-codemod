@@ -113,6 +113,8 @@ export default function runTransformation(
         return source
       }
 
+      global.scriptLine = descriptor.script.loc.start.line
+
       lang = descriptor.script.lang || 'js'
       fileInfo.source = descriptor.script.content
     }

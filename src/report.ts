@@ -1,4 +1,51 @@
 import * as fs from 'fs'
+import { table } from 'table'
+
+export function pushManualList(
+  path: string,
+  node: any,
+  name: string,
+  suggest: string,
+  website: string
+) {
+  let index = 0
+  const filepath = path.split('.')
+  if (filepath[filepath.length - 1] === 'vue') {
+    index = global.scriptLine - 1
+  } else {
+    index = 0
+  }
+  index = node?.value.loc?.start.line + index
+  let position: string = '[' + index + ',' + node?.value.loc?.start.column + ']'
+
+  const list = {
+    path: path,
+    position: position,
+    name: name,
+    suggest: suggest,
+    website: website
+  }
+  global.manualList.push(list)
+}
+
+export function VuePushManualList(
+  path: string,
+  node: any,
+  name: string,
+  suggest: string,
+  website: string
+) {
+  let position: string =
+    '[' + node?.loc?.start.line + ',' + node?.loc?.start.column + ']'
+  const list = {
+    path: path,
+    position: position,
+    name: name,
+    suggest: suggest,
+    website: website
+  }
+  global.manualList.push(list)
+}
 
 export function getCntFunc(key: string, outputObj: { [key: string]: number }) {
   if (!outputObj) {
@@ -7,9 +54,11 @@ export function getCntFunc(key: string, outputObj: { [key: string]: number }) {
   if (!outputObj.hasOwnProperty(key)) {
     outputObj[key] = 0
   }
+
   function cntFunc(quantity: number = 1) {
     outputObj[key] += quantity
   }
+
   return cntFunc
 }
 
@@ -20,9 +69,11 @@ export function formatterOutput(processFilePath: string[], formatter: string) {
     (sum, key) => sum + global.outputReport[key],
     0
   )
-  const totalDetected = totalChanged
+  const totalDetected = totalChanged + global.manualList.length
   const transRate =
-    totalDetected == totalChanged ? 100 : (100 * totalChanged) / totalDetected
+    totalDetected == totalChanged
+      ? 100
+      : ((100 * totalChanged) / totalDetected).toFixed(2)
 
   console.log(`--------------------------------------------------`)
   console.log(`Processed file:\n${processFilePathList}`)
@@ -54,9 +105,21 @@ export function formatterOutput(processFilePath: string[], formatter: string) {
     console.log(global.outputReport)
   }
 
+  let tableStr: string
+  let tableOutput: any[][] = [['Rule Names', 'Count']]
+  for (let i in global.outputReport) {
+    tableOutput.push([i, global.outputReport[i]])
+  }
+  tableStr = table(tableOutput, {
+    drawHorizontalLine: (lineIndex, rowCount) => {
+      return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount
+    },
+    columns: [{ alignment: 'left' }, { alignment: 'center' }]
+  })
+
   if (formatter === 'table') {
     console.log('The transformation stats: \n')
-    console.table(global.outputReport)
+    console.log(tableStr)
   }
 
   if (formatter === 'log') {
@@ -65,9 +128,17 @@ export function formatterOutput(processFilePath: string[], formatter: string) {
       processFilePath,
       totalDetected,
       totalChanged,
-      transRate
+      transRate,
+      tableStr
     )
   }
+
+  console.log('The list that you need to migrate your codes mannually')
+  let index = 1
+  global.manualList.forEach(manual => {
+    console.log('index:', index++)
+    console.log(manual)
+  })
 }
 
 export function logOutput(
@@ -75,7 +146,8 @@ export function logOutput(
   processFilePath: string[],
   totalDetected: number,
   totalChanged: number,
-  transRate: number
+  transRate: string | number,
+  tableStr: string
 ) {
   let options = {
     flags: 'w', //
@@ -92,5 +164,12 @@ export function logOutput(
   logger.log(`${totalDetected} places`, `need to be transformed`)
   logger.log(`${totalChanged} places`, `was transformed`)
   logger.log(`The transformation rate is ${transRate}%`)
-  logger.log('The transformation stats: \n', global.outputReport)
+  logger.log('The transformation stats: \n')
+  logger.log(tableStr)
+  logger.log('The list that you need to migrate your codes mannually')
+  let index = 1
+  global.manualList.forEach(manual => {
+    logger.log('index:', index++)
+    logger.log(manual)
+  })
 }

@@ -20,7 +20,10 @@ const transformationMap: {
   'remove-v-on-native': require('./remove-v-on-native'),
   'router-link-event-tag': require('./router-link-event-tag'),
   'router-link-exact': require('./router-link-exact'),
-  'router-view-keep-alive-transition': require('./router-view-keep-alive-transition')
+  'router-view-keep-alive-transition': require('./router-view-keep-alive-transition'),
+
+  // manual (must be used at the end of list)
+  'manual-remove-keycode': require('./manual/manual-remove-keycode')
 }
 
 export const excludedVueTransformations = ['v-bind-order-sensitive']

@@ -93,6 +93,8 @@ async function main() {
 
   // init global params
   global.globalApi = []
+  global.manualList = []
+  global.scriptLine = 0
   global.outputReport = {}
 
   const resolvedPaths = globby.sync(files as string[])

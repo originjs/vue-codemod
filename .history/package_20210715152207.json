@@ -12,7 +12,7 @@
     "build": "tsc",
     "prepublishOnly": "tsc",
     "playground": "npm run build && cd ./playground && npm install && npm run dev",
-    "test": "jest",
+    "test": "jest const-app",
     "fix": "npm-run-all --parallel lint:fix format:fix",
     "lint:codes": "eslint . --ext .ts",
     "lint:fix": "npm run lint:codes --fix",
@@ -36,12 +36,11 @@
     "globby": "^11.0.2",
     "jscodeshift": "^0.11.0",
     "lru-cache": "^6.0.0",
-    "prettier": "^2.3.1",
     "readline-sync": "^1.4.10",
     "source-map": "^0.6.1",
-    "table": "^6.7.1",
     "vue-eslint-parser": "^7.6.0",
-    "yargs": "^16.2.0"
+    "yargs": "^16.2.0",
+    "prettier": "^2.3.1"
   },
   "devDependencies": {
     "@types/debug": "^4.1.5",
