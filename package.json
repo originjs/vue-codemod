@@ -13,6 +13,7 @@
     "prepublishOnly": "tsc",
     "playground": "npm run build && cd ./playground && npm install && npm run dev",
     "test": "jest",
+    "test:cover": "jest --coverage",
     "fix": "npm-run-all --parallel lint:fix format:fix",
     "lint:codes": "eslint . --ext .ts",
     "lint:fix": "npm run lint:codes --fix",
