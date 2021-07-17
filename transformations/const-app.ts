@@ -71,26 +71,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
     ])
   )
 
-  let end = 0
-  let lastNode = createAppParent.get()
-  root.find(j.VariableDeclaration).forEach(node => {
-    // @ts-ignore
-    if (node.value.end > end) {
-      // @ts-ignore
-      end = node.value.end
-      lastNode = node
-    }
-  })
-  root.find(j.ExpressionStatement).forEach(node => {
-    // @ts-ignore
-    if (node.value.end > end) {
-      // @ts-ignore
-      end = node.value.end
-      lastNode = node
-    }
-  })
-
-  j(lastNode).insertAfter(
+  createAppParent.insertAfter(
     j.expressionStatement(
       j.callExpression(
         j.memberExpression(j.identifier('app'), j.identifier('mount')),
