@@ -1,4 +1,3 @@
-import * as fs from 'fs'
 import { table } from 'table'
 
 export function pushManualList(
@@ -62,7 +61,11 @@ export function getCntFunc(key: string, outputObj: { [key: string]: number }) {
   return cntFunc
 }
 
-export function formatterOutput(processFilePath: string[], formatter: string) {
+export function formatterOutput(
+  processFilePath: string[],
+  formatter: string,
+  logger: Console
+) {
   // normal output
   const processFilePathList = processFilePath.join('\n')
   const totalChanged = Object.keys(global.outputReport).reduce(
@@ -75,21 +78,21 @@ export function formatterOutput(processFilePath: string[], formatter: string) {
       ? 100
       : ((100 * totalChanged) / totalDetected).toFixed(2)
 
-  console.log(`--------------------------------------------------`)
+  console.log(`\x1B[0m--------------------------------------------------`)
   console.log(`Processed file:\n${processFilePathList}`)
   console.log(`Processed ${processFilePath.length} files`)
 
   console.log(
-    '\x1B[44;37;4m%s\x1B[0m',
+    '\x1B[31;4m%s\x1B[0m',
     `${totalDetected} places`,
     `need to be transformed`
   )
   console.log(
-    '\x1B[44;37;4m%s\x1B[0m',
+    '\x1B[32;4m%s\x1B[0m',
     `${totalChanged} places`,
     `was transformed`
   )
-  console.log(`The transformation rate is \x1B[44;37;4m${transRate}%\x1B[0m`)
+  console.log(`The transformation rate is \x1B[32;4m${transRate}%\x1B[0m`)
 
   if (formatter === 'all') {
     console.log('The transformation stats: \n')
@@ -129,16 +132,19 @@ export function formatterOutput(processFilePath: string[], formatter: string) {
       totalDetected,
       totalChanged,
       transRate,
-      tableStr
+      tableStr,
+      logger
     )
   }
 
-  console.log('The list that you need to migrate your codes mannually')
-  let index = 1
-  global.manualList.forEach(manual => {
-    console.log('index:', index++)
-    console.log(manual)
-  })
+  if (global.manualList.length) {
+    console.log('The list that you need to migrate your codes mannually: ')
+    let index = 1
+    global.manualList.forEach(manual => {
+      console.log('index:', index++)
+      console.log(manual)
+    })
+  }
 }
 
 export function logOutput(
@@ -147,17 +153,9 @@ export function logOutput(
   totalDetected: number,
   totalChanged: number,
   transRate: string | number,
-  tableStr: string
+  tableStr: string,
+  logger: Console
 ) {
-  let options = {
-    flags: 'w', //
-    encoding: 'utf8' // utf8编码
-  }
-
-  let stdout = fs.createWriteStream('./vue_codemod.log', options)
-
-  let logger = new console.Console(stdout)
-
   logger.log(`--------------------------------------------------`)
   logger.log(`Processed file:\n${processFilePathList}\n`)
   logger.log(`Processed ${processFilePath.length} files`)
@@ -166,10 +164,12 @@ export function logOutput(
   logger.log(`The transformation rate is ${transRate}%`)
   logger.log('The transformation stats: \n')
   logger.log(tableStr)
-  logger.log('The list that you need to migrate your codes mannually')
-  let index = 1
-  global.manualList.forEach(manual => {
-    logger.log('index:', index++)
-    logger.log(manual)
-  })
+  if (global.manualList.length) {
+    logger.log('The list that you need to migrate your codes mannually')
+    let index = 1
+    global.manualList.forEach(manual => {
+      logger.log('index:', index++)
+      logger.log(manual)
+    })
+  }
 }

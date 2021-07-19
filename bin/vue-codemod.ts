@@ -19,9 +19,9 @@ import { transform as packageTransform } from '../src/packageTransformation'
 
 import type { TransformationModule } from '../src/runTransformation'
 import { formatterOutput } from '../src/report'
+import { ruleDescripition } from '../src/ruleDescription'
 
 const debug = createDebug('vue-codemod:cli')
-const log = console.log.bind(console)
 let processFilePath: string[] = []
 
 const {
@@ -52,7 +52,8 @@ const {
     alias: 'f',
     type: 'string',
     describe: 'Specify an output report formatter',
-    default: 'detail'
+    default: 'table',
+    choices: ['table', 'detail', 'log']
   })
   .example([
     [
@@ -67,6 +68,18 @@ const {
   .help()
   .alias('h', 'help')
   .alias('v', 'version').argv
+
+let logger: Console = console
+if (formatter === 'log') {
+  let options = {
+    flags: 'w', //
+    encoding: 'utf8' // utf8编码
+  }
+
+  let stdout = fs.createWriteStream('./vue_codemod.log', options)
+
+  logger = new console.Console(stdout)
+}
 
 // TODO: port the `Runner` interface of jscodeshift
 async function main() {
@@ -108,7 +121,7 @@ async function main() {
     )
     if (packageTransform()) {
       processFilePath.push('package.json')
-      global.outputReport['package.json'] = 1
+      global.outputReport['package transformation'] = 1
     }
   }
 
@@ -135,10 +148,11 @@ async function main() {
     }
     if (packageTransform()) {
       processFilePath.push('package.json')
+      global.outputReport['package transformation'] = 1
     }
   }
 
-  formatterOutput(processFilePath, formatter)
+  formatterOutput(processFilePath, formatter, logger)
 }
 /**
  * process files by Transformation
@@ -151,8 +165,10 @@ function processTransformation(
   transformationName: string,
   transformationModule: TransformationModule
 ) {
-  log(`Processing use ${transformationName} transformation`)
-
+  console.time(`\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`)
+  if (formatter === 'log')
+    logger.time(`Processing use ${transformationName} transformation`)
+  let ruleProcessFile: string[] = []
   const extensions = ['.js', '.ts', '.vue', '.jsx', '.tsx']
   for (const p of resolvedPaths) {
     debug(`Processing ${p}…`)
@@ -180,6 +196,7 @@ function processTransformation(
 
       if (retainedSource != result) {
         fs.writeFileSync(p, result)
+        ruleProcessFile.push(p)
         if (processFilePath.indexOf(p) == -1) {
           processFilePath.push(p)
         } else {
@@ -188,6 +205,23 @@ function processTransformation(
       }
     } catch (e) {
       console.error(e)
+    }
+  }
+  if (ruleProcessFile.length) {
+    console.timeEnd(`\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`)
+    if (formatter === 'log')
+      logger.timeEnd(`Processing use ${transformationName} transformation`)
+    if (
+      ruleDescripition.hasOwnProperty(transformationName) &&
+      (formatter === 'detail' || formatter === 'log')
+    ) {
+      let ruleOutput: { [key: string]: any } = {}
+      ruleOutput.rule_name = transformationName
+      // @ts-ignore
+      ruleOutput.website = ruleDescripition[transformationName].description
+      ruleOutput.transformed_files = ruleProcessFile
+      console.log('\x1B[0m', ruleOutput)
+      if (formatter === 'log') logger.log(ruleOutput)
     }
   }
 }
