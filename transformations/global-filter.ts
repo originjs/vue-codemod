@@ -21,20 +21,6 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
   })
 
   if (!appDeclare.length) {
-    //dont transform new Vue(...) => Vue.createApp(...)?
-    const newVue = root.find(j.NewExpression, {
-      callee: {
-        type: 'Identifier',
-        name: 'Vue'
-      }
-    })
-
-    // need to transform global-filter first
-    if (newVue.length) {
-      console.warn(
-        'please transform new-global-api before transform global-filter!'
-      )
-    }
     return
   }
   const appName = appDeclare.at(0).get().node.id.name
