@@ -6,10 +6,11 @@ import { transformAST as removeExtraneousImport } from './remove-extraneous-impo
 
 import type { ObjectExpression } from 'jscodeshift'
 import { getCntFunc } from '../src/report'
+import { pushManualList } from '../src/report'
 
 // new Router() -> createRouter()
 export const transformAST: ASTTransformation = context => {
-  const { root, j } = context
+  const { root, j, filename } = context
   const routerImportDecls = root.find(j.ImportDeclaration, {
     source: {
       value: 'vue-router'
@@ -51,6 +52,50 @@ export const transformAST: ASTTransformation = context => {
         source: 'vue-router'
       })
     }
+
+    // filter the node to the manual list
+    let ifEnd = false
+    newVueRouter.forEach(({ node }) => {
+      if (
+        node.arguments.length > 0 &&
+        !j.ObjectExpression.check(node.arguments[0])
+      ) {
+        const path = filename
+        const name = 'vue-router new VueRouter'
+        const suggest = `Currently, only object expressions passed to \`new VueRouter\` can be transformed.`
+        const website =
+          'https://next.router.vuejs.org/guide/migration/index.html#new-router-becomes-createrouter'
+        pushManualList(path, node, name, suggest, website)
+        ifEnd = true
+        return
+      }
+      if (node.arguments.length > 0) {
+        // @ts-ignore
+        const routerConfig: ObjectExpression = node.arguments[0]
+        routerConfig.properties.forEach(p => {
+          if (
+            (j.ObjectProperty.check(p) || j.Property.check(p)) &&
+            (p.key as any).name === 'mode'
+          ) {
+            const mode = (p.value as any).value
+            if (mode !== 'hash' && mode !== 'history' && mode !== 'abstract') {
+              const path = filename
+              const name = 'vue-router mode'
+              const suggest = `mode must be one of 'hash', 'history', or 'abstract'`
+              const website =
+                'https://next.router.vuejs.org/guide/migration/index.html#new-history-option-to-replace-mode'
+              pushManualList(path, p, name, suggest, website)
+              ifEnd = true
+              return
+            }
+          }
+        })
+      }
+    })
+    if (ifEnd) {
+      return
+    }
+
     newVueRouter.replaceWith(({ node }) => {
       // mode: 'history' -> history: createWebHistory(), etc
       let historyMode = 'createWebHashHistory'
@@ -67,7 +112,6 @@ export const transformAST: ASTTransformation = context => {
         if (!j.ObjectProperty.check(p) && !j.Property.check(p)) {
           return true
         }
-
         if ((p.key as any).name === 'mode') {
           const mode = (p.value as any).value
           if (mode === 'hash') {
@@ -109,7 +153,6 @@ export const transformAST: ASTTransformation = context => {
           )
         )
       )
-
       return j.callExpression(j.identifier(localCreateRouter), node.arguments)
     })
 
@@ -130,12 +173,10 @@ export const transformAST: ASTTransformation = context => {
         specifier: { type: 'named', imported: 'START_LOCATION' },
         source: 'vue-router'
       })
-
       startLocationMember.replaceWith(({ node }) => {
         return node.property
       })
     }
-
     removeExtraneousImport(context, {
       localBinding: localVueRouter
     })

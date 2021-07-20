@@ -165,7 +165,9 @@ function processTransformation(
   transformationName: string,
   transformationModule: TransformationModule
 ) {
-  console.time(`\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`)
+  console.time(
+    `\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`
+  )
   if (formatter === 'log')
     logger.time(`Processing use ${transformationName} transformation`)
   let ruleProcessFile: string[] = []
@@ -208,7 +210,9 @@ function processTransformation(
     }
   }
   if (ruleProcessFile.length) {
-    console.timeEnd(`\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`)
+    console.timeEnd(
+      `\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`
+    )
     if (formatter === 'log')
       logger.timeEnd(`Processing use ${transformationName} transformation`)
     if (
