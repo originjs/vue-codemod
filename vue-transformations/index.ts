@@ -21,6 +21,7 @@ const transformationMap: {
   'router-link-event-tag': require('./router-link-event-tag'),
   'router-link-exact': require('./router-link-exact'),
   'router-view-keep-alive-transition': require('./router-view-keep-alive-transition'),
+  'time-picker-format-attribute':require('./element-ui/time-picker-format-attribute'),
 
   // manual (must be used at the end of list)
   'manual-remove-keycode': require('./manual/manual-remove-keycode')
