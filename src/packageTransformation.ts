@@ -86,6 +86,10 @@ export function process(packageObj: any): any {
   if (packageObj?.eslintConfig?.parserOptions?.parser != undefined) {
     packageObj.eslintConfig.parserOptions.parser = '@babel/eslint-parser'
   }
+  if (packageObj?.dependencies['element-ui'] != undefined) {
+    delete packageObj.dependencies['element-ui']
+    packageObj.dependencies['element-plus'] = '^1.0.2-beta.55'
+  }
   return packageObj
 }
 /**

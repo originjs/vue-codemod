@@ -85,3 +85,33 @@ let output =
     expect(pack.process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
   })
 })
+
+describe('upgrade element-ui', () => {
+	let input =
+	`{
+		"dependencies": {
+			"vue": "^2.6.10",
+			"vue-i18n": "^8.14.0",
+			"vue-router": "^3.1.2",
+			"vuex": "^3.1.1",
+			"@vue/composition-api": "^1.0.0-rc.12",
+			"element-ui": "^1.0.0"
+		}
+	}
+	` 
+	let output =
+	`{
+		"dependencies": {
+			"vue": "^3.1.1",
+			"vue-i18n": "^9.1.6",
+			"vue-router": "^4.0.8",
+			"vuex": "^4.0.1",
+			"element-plus": "^1.0.2-beta.55"
+		}
+	}
+	` 
+	  it('upgread element-ui to element-plus', () => {
+		expect(pack.process(JSON.parse(input))).toStrictEqual(JSON.parse(output))
+	  })
+	})
+	
