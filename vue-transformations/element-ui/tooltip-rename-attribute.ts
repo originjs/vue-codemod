@@ -9,7 +9,7 @@ import {
 export const transformAST = createTransformAST(
   nodeFilter,
   fix,
-  'time-picker-format-attribute'
+  'tooltip-rename-attribute'
 )
 export default wrap(transformAST)
 
