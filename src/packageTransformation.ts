@@ -34,6 +34,7 @@ const globalAddConfig: {
   devDependencies: {
     add: {
       '@babel/core': '^7.14.6',
+      '@babel/eslint-parser': '^7.14.6',
       eslint: '^7.20.0',
       '@vue/compiler-sfc': '^3.1.1',
       'eslint-plugin-vue': '^7.11.1'
