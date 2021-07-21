@@ -1,11 +1,11 @@
 <template>
   <el-tooltip
     effect='dark'
-    content='Bottom Right 提示文字'
+    content='Bottom Right'
     placement='bottom-end'
     show-after='1000'
     auto-close='3000'>
-    <el-button>下右</el-button>
+    <el-button>Button</el-button>
   </el-tooltip>
 
   <div
