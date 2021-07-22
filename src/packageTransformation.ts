@@ -30,21 +30,19 @@ const globalAddConfig: {
     update: {},
     delete: {}
   },
-  peerDependencies: { add: {}, update: {}, delete: {} },
+  peerDependencies: {
+    add: {},
+    update: {},
+    delete: {}
+  },
   devDependencies: {
     add: {
-      '@babel/core': '^7.14.6',
-      '@babel/eslint-parser': '^7.14.6',
-      eslint: '^7.20.0',
-      '@vue/compiler-sfc': '^3.1.1',
-      'eslint-plugin-vue': '^7.11.1'
+      '@vue/compiler-sfc': '^3.1.1'
     },
     update: {
       '@vue/cli-plugin-babel': '^4.5.0',
-      '@vue/cli-plugin-eslint': '^4.5.0',
       '@vue/cli-service': '^4.5.0'
-    },
-    delete: { 'babel-eslint': '' }
+    }
   }
 }
 
@@ -84,9 +82,6 @@ export function process(packageObj: any): any {
       }
     })
 
-  if (packageObj?.eslintConfig?.parserOptions?.parser != undefined) {
-    packageObj.eslintConfig.parserOptions.parser = '@babel/eslint-parser'
-  }
   if (packageObj?.dependencies['element-ui'] != undefined) {
     delete packageObj.dependencies['element-ui']
     packageObj.dependencies['element-plus'] = '^1.0.2-beta.55'
@@ -100,18 +95,21 @@ export function process(packageObj: any): any {
  * @returns package.json
  */
 function processCore(packageObj: any, config: Config): any {
-  Object.keys(config.add).forEach(key => {
-    packageObj[key] = config.add[key]
-  })
+  config.add &&
+    Object.keys(config.add).forEach(key => {
+      packageObj[key] = config.add[key]
+    })
 
-  Object.keys(config.update).forEach(key => {
-    if (packageObj[key] != undefined) {
-      packageObj[key] = config.update[key]
-    }
-  })
+  config.update &&
+    Object.keys(config.update).forEach(key => {
+      if (packageObj[key] != undefined) {
+        packageObj[key] = config.update[key]
+      }
+    })
 
-  Object.keys(config.delete).forEach(key => {
-    delete packageObj[key]
-  })
+  config.delete &&
+    Object.keys(config.delete).forEach(key => {
+      delete packageObj[key]
+    })
   return packageObj
 }

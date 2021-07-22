@@ -36,9 +36,9 @@ export const runTest = (
       path: inputPath,
       source: fs.readFileSync(inputPath).toString()
     }
-    const transformation = (transformationType == 'vue'
-      ? vueTransformationMap
-      : transformationMap) [transformationName]
+    const transformation = (
+      transformationType == 'vue' ? vueTransformationMap : transformationMap
+    )[transformationName]
     expect(runTransformation(fileInfo, transformation)).toEqual(
       fs.readFileSync(outputPath).toString()
     )

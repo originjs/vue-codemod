@@ -56,11 +56,8 @@ let output =
 		"vuex": "^4.0.1"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.14.6",
-		"@babel/eslint-parser": "^7.14.6",
+		"babel-eslint": "^10.0.2",
 		"@vue/compiler-sfc": "^3.1.1",
-		"eslint": "^7.20.0",
-		"eslint-plugin-vue": "^7.11.1",
 		"vue": "^3.1.1",
 		"vue-i18n": "^9.1.6",
 		"vue-router": "^4.0.8",
@@ -77,7 +74,7 @@ let output =
 		],
 		"rules": {},
 		"parserOptions": {
-			"parser": "@babel/eslint-parser"
+			"parser": "babel-eslint"
 		}
 	}
 }
