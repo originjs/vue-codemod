@@ -11,6 +11,7 @@ import { getCntFunc } from '../../src/report'
  * @param content
  */
 export const transformAST: ASTTransformation = ({ root, j }) => {
+  const cntFunc = getCntFunc('element-plus-upgrade', subRules)
   // find element-ui import
   const elementPlusImport = root.find(j.ImportDeclaration, {
     source: {
@@ -22,6 +23,7 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
     elementPlusImport.forEach(({ node }) => {
       let newSpecifier: (ImportSpecifier | ImportDefaultSpecifier)[] = []
       node.specifiers.forEach(importNode => {
+        cntFunc()
         if (importNode.type === 'ImportSpecifier') {
           newSpecifier.push(
             j.importSpecifier(
@@ -38,10 +40,6 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
         }
       })
     })
-
-    // stats
-    const cntFunc = getCntFunc('observable', subRules)
-    cntFunc()
   }
 }
 

@@ -7,20 +7,17 @@ import { getCntFunc } from '../../src/report'
  * @param content
  */
 export const transformAST: ASTTransformation = ({ root, j }) => {
+  const cntFunc = getCntFunc('element-plus-import', subRules)
   // find element-ui import
-  const elementPlusImport = root.find(j.ImportDeclaration, {
-    source: {
-      value: 'element-ui'
-    }
+  const elementPlusImport = root.find(j.ImportDeclaration, node => {
+    return node.source.value.toString().startsWith('element-ui')
   })
-
   if (elementPlusImport.length) {
     elementPlusImport.forEach(({ node }) => {
-      node.source.value = 'element-plus'
+      node.source.value =
+        'element-plus' +
+        node.source.value?.toString().substring('element-ui'.length)
     })
-
-    // stats
-    const cntFunc = getCntFunc('observable', subRules)
     cntFunc()
   }
 }

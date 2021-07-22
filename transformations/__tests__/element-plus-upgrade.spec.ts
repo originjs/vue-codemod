@@ -24,3 +24,11 @@ defineInlineTest(
   `import ElementUI, { ElMessageBox as MessageBox } from "element-plus";`,
   'correctly transform multiple imports from element-plus'
 )
+
+defineInlineTest(
+  transform,
+  {},
+  `import locale from "element-ui/lib/locale/lang/zh-cn";`,
+  `import locale from "element-plus/lib/locale/lang/zh-cn";`,
+  'correctly transform import from element-plus'
+)
