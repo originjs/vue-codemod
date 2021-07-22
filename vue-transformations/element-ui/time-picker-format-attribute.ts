@@ -20,17 +20,17 @@ function nodeFilter(node: Node): boolean {
   return (
     node.type === 'VAttribute' &&
     node.key.type === 'VDirectiveKey' &&
-    node.key.name.name === 'bind' &&
+    node.key.name?.name === 'bind' &&
     // @ts-ignore
-    node.key.argument.name === 'picker-options' &&
+    node.key.argument?.name === 'picker-options' &&
     node.value?.type === 'VExpressionContainer' &&
     node.value.expression?.type === 'ObjectExpression' &&
     // @ts-ignore
-    node.value.expression.properties.filter(item => item.key.name === 'format')
+    node.value.expression.properties?.filter(item => item.key.name === 'format')
       .length > 0 &&
-    node.parent.parent.type === 'VElement' &&
-    node.parent.parent.name === 'el-time-picker' &&
-    node.parent.attributes.filter(pre).length === 0
+    node.parent?.parent.type === 'VElement' &&
+    node.parent.parent?.name === 'el-time-picker' &&
+    node.parent.attributes?.filter(pre).length === 0
   )
 }
 
