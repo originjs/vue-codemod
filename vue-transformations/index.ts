@@ -26,6 +26,7 @@ const transformationMap: {
   'time-picker-format-attribute': require('./element-ui/time-picker-format-attribute'),
   'tooltip-rename-attribute': require('./element-ui/tooltip-rename-attribute'),
   'popover-rename-attribute': require('./element-ui/popover-rename-attribute'),
+  'popconfirm-rename-event': require('./element-ui/popconfirm-rename-event'),
 
   // manual (must be used at the end of list)
   'manual-remove-keycode': require('./manual/manual-remove-keycode')
