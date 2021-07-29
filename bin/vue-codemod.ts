@@ -14,6 +14,9 @@ import builtInTransformations from '../transformations'
 import { excludedTransformations } from '../transformations'
 import vueTransformations from '../vue-transformations'
 import { excludedVueTransformations } from '../vue-transformations'
+import bothTransformations, {
+  bothTransformationModule
+} from '../both-transformations'
 import runTransformation from '../src/runTransformation'
 import { transform as packageTransform } from '../src/packageTransformation'
 
@@ -109,16 +112,22 @@ async function main() {
   global.manualList = []
   global.scriptLine = 0
   global.outputReport = {}
+  global.buffers = []
 
   const resolvedPaths = globby.sync(files as string[])
   if (transformationName != undefined) {
     debug(`run ${transformationName} transformation`)
     const transformationModule = loadTransformationModule(transformationName)
-    processTransformation(
-      resolvedPaths,
-      transformationName,
-      transformationModule
-    )
+    if (transformationModule.js) {
+      bothProcess(resolvedPaths, transformationName, transformationModule)
+    } else {
+      processTransformation(
+        resolvedPaths,
+        transformationName,
+        transformationModule
+      )
+    }
+
     if (packageTransform()) {
       processFilePath.push('package.json')
       global.outputReport['package transformation'] = 1
@@ -127,9 +136,14 @@ async function main() {
 
   if (runAllTransformation) {
     debug(`run all transformation`)
+    let maunal = []
     for (let key in builtInTransformations) {
       if (!excludedTransformations.includes(key)) {
         processTransformation(resolvedPaths, key, builtInTransformations[key])
+        if (key.toString().indexOf('manual') !== -1) {
+          console.log('key:', key)
+          maunal.push(key)
+        }
       } else {
         debug(
           `skip ${key} transformation, Because it will run in other transformation`
@@ -140,10 +154,26 @@ async function main() {
     for (let key in vueTransformations) {
       if (!excludedVueTransformations.includes(key)) {
         processTransformation(resolvedPaths, key, vueTransformations[key])
+        if (key.toString().indexOf('manual') !== -1) {
+          console.log('key:', key)
+          maunal.push(key)
+        }
       } else {
         debug(
           `skip ${key} transformation, Because it will run in other transformation`
         )
+      }
+    }
+
+    for (let key in bothTransformations) {
+      bothProcess(resolvedPaths, key, bothTransformations[key])
+    }
+
+    for (let key in maunal) {
+      if (builtInTransformations[key]) {
+        processTransformation(resolvedPaths, key, builtInTransformations[key])
+      } else if (vueTransformations[key]) {
+        processTransformation(resolvedPaths, key, vueTransformations[key])
       }
     }
     if (packageTransform()) {
@@ -154,6 +184,37 @@ async function main() {
 
   formatterOutput(processFilePath, formatter, logger)
 }
+
+function bothProcess(
+  resolvedPaths: string[],
+  transformationName: string,
+  transformationModule: bothTransformationModule
+) {
+  if (transformationModule.templateBeforeScript) {
+    processTransformation(
+      resolvedPaths,
+      transformationName,
+      transformationModule.vue
+    )
+    processTransformation(
+      resolvedPaths,
+      transformationName,
+      transformationModule.js
+    )
+  } else {
+    processTransformation(
+      resolvedPaths,
+      transformationName,
+      transformationModule.js
+    )
+    processTransformation(
+      resolvedPaths,
+      transformationName,
+      transformationModule.vue
+    )
+  }
+}
+
 /**
  * process files by Transformation
  * @param resolvedPaths resolved file path
@@ -234,6 +295,7 @@ main().catch(err => {
   console.error(err)
   process.exit(1)
 })
+
 /**
  * load Transformation Module
  * @param nameOrPath
@@ -242,11 +304,15 @@ main().catch(err => {
 function loadTransformationModule(nameOrPath: string) {
   let jsTransformation = builtInTransformations[nameOrPath]
   let vueTransformation = vueTransformations[nameOrPath]
+  let bothTransformation = bothTransformations[nameOrPath]
   if (jsTransformation) {
     return jsTransformation
   }
   if (vueTransformation) {
     return vueTransformation
+  }
+  if (bothTransformation) {
+    return bothTransformation
   }
 
   const customModulePath = path.resolve(process.cwd(), nameOrPath)
