@@ -20,6 +20,7 @@ import { transform as packageTransform } from '../src/packageTransformation'
 import type { TransformationModule } from '../src/runTransformation'
 import { formatterOutput } from '../src/report'
 import { ruleDescripition } from '../src/ruleDescription'
+import cliProgress from 'cli-progress'
 
 const debug = createDebug('vue-codemod:cli')
 let processFilePath: string[] = []
@@ -72,12 +73,10 @@ const {
 let logger: Console = console
 if (formatter === 'log') {
   let options = {
-    flags: 'w', //
-    encoding: 'utf8' // utf8编码
+    flags: 'w', 
+    encoding: 'utf8' // utf-8
   }
-
   let stdout = fs.createWriteStream('./vue_codemod.log', options)
-
   logger = new console.Console(stdout)
 }
 
@@ -110,6 +109,16 @@ async function main() {
   global.scriptLine = 0
   global.outputReport = {}
 
+  const cliInstance = new cliProgress.SingleBar(
+    {
+      format: 'progress [{bar}] {percentage}% | {process} | {value}/{total}',
+      clearOnComplete: false,
+      linewrap: true,
+      fps: 60
+    },
+    cliProgress.Presets.shades_classic
+  )
+
   const resolvedPaths = globby.sync(files as string[])
   if (transformationName != undefined) {
     debug(`run ${transformationName} transformation`)
@@ -126,9 +135,16 @@ async function main() {
   }
 
   if (runAllTransformation) {
+    const totalRule: number =
+      Object.getOwnPropertyNames(builtInTransformations).length +
+      Object.getOwnPropertyNames(vueTransformations).length -
+      excludedTransformations.length -
+      excludedVueTransformations.length
+    cliInstance.start(totalRule, 0, { process: 'Transformation begins' })
     debug(`run all transformation`)
     for (let key in builtInTransformations) {
       if (!excludedTransformations.includes(key)) {
+        cliInstance.increment({ process: `Executing: ${key}` })
         processTransformation(resolvedPaths, key, builtInTransformations[key])
       } else {
         debug(
@@ -139,6 +155,7 @@ async function main() {
 
     for (let key in vueTransformations) {
       if (!excludedVueTransformations.includes(key)) {
+        cliInstance.increment({ process: `Executing: ${key}` })
         processTransformation(resolvedPaths, key, vueTransformations[key])
       } else {
         debug(
@@ -151,7 +168,10 @@ async function main() {
       global.outputReport['package transformation'] = 1
     }
   }
-
+  cliInstance.update(cliInstance.getTotal(), {
+    process: 'Transformation finished! '
+  })
+  cliInstance.stop()
   formatterOutput(processFilePath, formatter, logger)
 }
 /**
@@ -165,9 +185,6 @@ function processTransformation(
   transformationName: string,
   transformationModule: TransformationModule
 ) {
-  console.time(
-    `\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`
-  )
   if (formatter === 'log')
     logger.time(`Processing use ${transformationName} transformation`)
   let ruleProcessFile: string[] = []
@@ -210,9 +227,6 @@ function processTransformation(
     }
   }
   if (ruleProcessFile.length) {
-    console.timeEnd(
-      `\x1B[0mProcessing use \x1B[1m${transformationName} transformation\x1B[0m\x1B[33m`
-    )
     if (formatter === 'log')
       logger.timeEnd(`Processing use ${transformationName} transformation`)
     if (
