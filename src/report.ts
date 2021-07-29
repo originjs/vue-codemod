@@ -138,7 +138,7 @@ export function formatterOutput(
   }
 
   if (global.manualList.length) {
-    console.log('The list that you need to migrate your codes mannually: ')
+    console.log('The list that you need to migrate your codes manually: ')
     let index = 1
     global.manualList.forEach(manual => {
       console.log('index:', index++)
@@ -165,7 +165,7 @@ export function logOutput(
   logger.log('The transformation stats: \n')
   logger.log(tableStr)
   if (global.manualList.length) {
-    logger.log('The list that you need to migrate your codes mannually')
+    logger.log('The list that you need to migrate your codes manually')
     let index = 1
     global.manualList.forEach(manual => {
       logger.log('index:', index++)
