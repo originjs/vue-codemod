@@ -73,7 +73,7 @@ const {
 let logger: Console = console
 if (formatter === 'log') {
   let options = {
-    flags: 'w', 
+    flags: 'w',
     encoding: 'utf8' // utf-8
   }
   let stdout = fs.createWriteStream('./vue_codemod.log', options)
@@ -119,7 +119,10 @@ async function main() {
     cliProgress.Presets.shades_classic
   )
 
-  const resolvedPaths = globby.sync(files as string[])
+  const resolvedPaths = globby.sync(
+    (files as string[]).concat('!node_modules'),
+    { gitignore: true }
+  )
   if (transformationName != undefined) {
     debug(`run ${transformationName} transformation`)
     const transformationModule = loadTransformationModule(transformationName)
