@@ -46,6 +46,7 @@ const transformationMap: {
   'const-app': require('./const-app'),
 
   // manual (must be used at the end of list)
+  // rule's name must be start with 'manual-'
   'manual-remove-Vue': require('./manual/manual-remove-Vue'),
   'manual-remove-VueRouter': require('./manual/manual-remove-VueRouter'),
   'manual-remove-on-off-once': require('./manual/manual-remove-on-off-once'),

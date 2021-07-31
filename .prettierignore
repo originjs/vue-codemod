@@ -20,3 +20,6 @@ README.md
 tsconfig.json
 yarn.lock
 coverage
+both-transformations/__testfixtures__
+both-transformations/__tests__
+

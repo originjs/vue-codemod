@@ -30,6 +30,7 @@ const transformationMap: {
   'remove-row-type-flex': require('./element-ui/remove-row-type-flex'),
 
   // manual (must be used at the end of list)
+  // rule's name must be start with 'manual-'
   'manual-remove-keycode': require('./manual/manual-remove-keycode')
 }
 

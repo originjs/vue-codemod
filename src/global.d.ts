@@ -19,6 +19,7 @@ declare global {
   var scriptLine: number
   var outputReport: { [key: string]: number }
   var subRules: { [key: string]: number }
+  var buffers: { [name: string]: any }
 }
 
 export {}
