@@ -35,22 +35,29 @@ export const transformAST: ASTTransformation = context => {
     const createRouterIdentifiers = root.find(j.Identifier, {
       name: 'createRouter'
     })
-    if (createRouterIdentifiers.length) {
-      // rename createRouter to newCreateRouter
-      localCreateRouter = 'newCreateRouter'
-      addImport(context, {
-        specifier: {
-          type: 'named',
-          imported: 'createRouter',
-          local: localCreateRouter
-        },
-        source: 'vue-router'
-      })
-    } else {
-      addImport(context, {
-        specifier: { type: 'named', imported: 'createRouter' },
-        source: 'vue-router'
-      })
+    const importedCreateRouter = importedVueRouter.find(j.ImportSpecifier, {
+      imported: {
+        name: 'createRouter'
+      }
+    })
+    if (!importedCreateRouter.length) {
+      if (createRouterIdentifiers.length) {
+        // rename createRouter to newCreateRouter
+        localCreateRouter = 'newCreateRouter'
+        addImport(context, {
+          specifier: {
+            type: 'named',
+            imported: 'createRouter',
+            local: localCreateRouter
+          },
+          source: 'vue-router'
+        })
+      } else {
+        addImport(context, {
+          specifier: { type: 'named', imported: 'createRouter' },
+          source: 'vue-router'
+        })
+      }
     }
 
     // filter the node to the manual list
