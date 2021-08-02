@@ -10,7 +10,10 @@ export const transformAST: ASTTransformation = ({ root, j }) => {
       name: 'app'
     }
   })
-  const vue_createApp = j(const_app.at(0).get().value.init).find(
+  if (const_app.length <= 0) {
+    return
+  }
+  const vue_createApp = j(const_app?.at(0).get().value.init).find(
     j.MemberExpression,
     {
       object: {
