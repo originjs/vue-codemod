@@ -5,25 +5,27 @@ import { getCntFunc } from '../src/report'
 export const transformAST: ASTTransformation = ({ root, j }) => {
   const cntFunc = getCntFunc('global-filter', global.outputReport)
   // find the createApp()
-  const appDeclare = root.find(j.VariableDeclarator, {
-    id: { type: 'Identifier' },
-    init: {
-      type: 'CallExpression',
-      callee: {
-        object: {
-          name: 'Vue'
-        },
-        property: {
-          name: 'createApp'
-        }
-      }
+  const const_app = root.find(j.VariableDeclarator, {
+    id: {
+      name: 'app'
     }
   })
+  const vue_createapp = j(const_app.at(0).get().value.init).find(
+    j.MemberExpression,
+    {
+      object: {
+        name: 'Vue'
+      },
+      property: {
+        name: 'createApp'
+      }
+    }
+  )
 
-  if (!appDeclare.length) {
+  if (!const_app.length || !vue_createapp.length) {
     return
   }
-  const appName = appDeclare.at(0).get().node.id.name
+  const appName = const_app.at(0).get().value.id.name
 
   // Vue.filter('filterName', function(value) {}) =>
   // app.config.globalProperties.$filters = { filterName(value) {} }
