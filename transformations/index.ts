@@ -20,7 +20,6 @@ const transformationMap: {
   'remove-vue-set-and-delete': require('./remove-vue-set-and-delete'),
   'rename-lifecycle': require('./rename-lifecycle'),
   'add-emit-declaration': require('./add-emit-declaration'),
-  'global-filter': require('./global-filter'),
   'tree-shaking': require('./tree-shaking'),
   'v-model': require('./v-model'),
   'render-to-resolveComponent': require('./render-to-resolveComponent'),
@@ -44,6 +43,9 @@ const transformationMap: {
   'router-update-addRoute': require('./router/router-update-addRoute'),
 
   'const-app': require('./const-app'),
+  // need to use 'const app=Vue.createApp'
+  'global-filter': require('./global-filter'),
+  'move-app-mount': require('./move-app-mount'),
 
   // manual (must be used at the end of list)
   // rule's name must be start with 'manual-'
