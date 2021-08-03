@@ -1,4 +1,5 @@
 import type { JSCodeshift, Transform, Core } from 'jscodeshift'
+import { cliInstance } from './report'
 
 export type Context = {
   root: ReturnType<Core>
@@ -21,6 +22,7 @@ export default function astTransformationToJSCodeshiftModule<Params = any>(
     try {
       root = j(file.source)
     } catch (err) {
+      cliInstance.stop()
       console.error(
         `JSCodeshift failed to parse ${file.path},` +
           ` please check whether the syntax is valid`

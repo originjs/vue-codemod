@@ -18,9 +18,8 @@ import runTransformation from '../src/runTransformation'
 import { transform as packageTransform } from '../src/packageTransformation'
 
 import type { TransformationModule } from '../src/runTransformation'
-import { formatterOutput } from '../src/report'
+import { formatterOutput, cliInstance } from '../src/report'
 import { ruleDescription } from '../src/ruleDescription'
-import cliProgress from 'cli-progress'
 
 const debug = createDebug('vue-codemod:cli')
 let processFilePath: string[] = []
@@ -108,16 +107,6 @@ async function main() {
   global.manualList = []
   global.scriptLine = 0
   global.outputReport = {}
-
-  const cliInstance = new cliProgress.SingleBar(
-    {
-      format: 'progress [{bar}] {percentage}% | {process} | {value}/{total}',
-      clearOnComplete: false,
-      linewrap: true,
-      fps: 60
-    },
-    cliProgress.Presets.shades_classic
-  )
 
   const resolvedPaths = globby.sync(
     (files as string[]).concat('!node_modules'),
@@ -241,7 +230,6 @@ function processTransformation(
       // @ts-ignore
       ruleOutput.website = ruleDescription[transformationName].description
       ruleOutput.transformed_files = ruleProcessFile
-      console.log('\x1B[0m', ruleOutput)
       if (formatter === 'log') logger.log(ruleOutput)
     }
   }

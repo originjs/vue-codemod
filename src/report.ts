@@ -1,5 +1,15 @@
 import { table } from 'table'
+import cliProgress from 'cli-progress'
 
+export const cliInstance = new cliProgress.SingleBar(
+  {
+    format: 'progress [{bar}] {percentage}% | {process} | {value}/{total}',
+    clearOnComplete: false,
+    linewrap: true,
+    fps: 60
+  },
+  cliProgress.Presets.shades_classic
+)
 export function pushManualList(
   path: string,
   node: any,
