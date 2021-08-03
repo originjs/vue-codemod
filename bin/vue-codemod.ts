@@ -94,8 +94,8 @@ async function main() {
   // Remind user to back up files
   const answer = question(
     'Warning!!\n' +
-      'This tool may overwrite files.\n' +
-      'press enter or enter yes or enter Y to continue:'
+      'This tool may overwrite files. Please use version control tools or back up your code in advance.\n' +
+      'Press enter or enter yes or enter Y to continue:'
   )
   if (!['', 'yes', 'Y'].includes(answer.trim())) {
     console.log('Abort!!!')

@@ -6,7 +6,7 @@ export const cliInstance = new cliProgress.SingleBar(
     format: 'progress [{bar}] {percentage}% | {process} | {value}/{total}',
     clearOnComplete: false,
     linewrap: true,
-    fps: 60
+    fps: 144
   },
   cliProgress.Presets.shades_classic
 )
@@ -98,11 +98,23 @@ export function formatterOutput(
       : ((100 * totalChanged) / totalDetected).toFixed(2)
 
   console.log(`\x1B[0m--------------------------------------------------`)
-  console.log(`Processed file:\n${processFilePathList}`)
-  console.log(`Processed ${processFilePath.length} files`)
+  console.log(
+    `Processed ${processFilePath.length} files:\n${processFilePathList}\n`
+  )
+
+  if (global.manualList.length) {
+    console.log(
+      `The list that you need to migrate your codes manually (total: ${global.manualList.length}): `
+    )
+    let index = 1
+    global.manualList.forEach(manual => {
+      console.log('index:', index++)
+      console.log(manual)
+    })
+  }
 
   console.log(
-    '\x1B[31;4m%s\x1B[0m',
+    '\n\n\x1B[31;4m%s\x1B[0m',
     `${totalDetected} places`,
     `need to be transformed`
   )
@@ -113,11 +125,6 @@ export function formatterOutput(
   )
   console.log(`The transformation rate is \x1B[32;4m${transRate}%\x1B[0m`)
 
-  if (formatter === 'all') {
-    console.log('The transformation stats: \n')
-    console.log(global.outputReport)
-  }
-
   Object.keys(outputReport).forEach(item => {
     if (!outputReport[item]) delete outputReport[item]
   })
@@ -125,44 +132,31 @@ export function formatterOutput(
   if (formatter === 'detail') {
     console.log('The transformation stats: \n')
     console.log(global.outputReport)
-  }
-
-  let tableStr: string
-  let tableOutput: any[][] = [['Rule Names', 'Count']]
-  for (let i in global.outputReport) {
-    tableOutput.push([i, global.outputReport[i]])
-  }
-  tableStr = table(tableOutput, {
-    drawHorizontalLine: (lineIndex, rowCount) => {
-      return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount
-    },
-    columns: [{ alignment: 'left' }, { alignment: 'center' }]
-  })
-
-  if (formatter === 'table') {
-    console.log('The transformation stats: \n')
-    console.log(tableStr)
-  }
-
-  if (formatter === 'log') {
-    logOutput(
-      processFilePathList,
-      processFilePath,
-      totalDetected,
-      totalChanged,
-      transRate,
-      tableStr,
-      logger
-    )
-  }
-
-  if (global.manualList.length) {
-    console.log('The list that you need to migrate your codes manually: ')
-    let index = 1
-    global.manualList.forEach(manual => {
-      console.log('index:', index++)
-      console.log(manual)
+  } else {
+    let tableStr: string
+    let tableOutput: any[][] = [['Rule Names', 'Count']]
+    for (let i in global.outputReport) {
+      tableOutput.push([i, global.outputReport[i]])
+    }
+    tableStr = table(tableOutput, {
+      drawHorizontalLine: (lineIndex, rowCount) => {
+        return lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount
+      },
+      columns: [{ alignment: 'left' }, { alignment: 'center' }]
     })
+    console.log('The transformation stats: ')
+    console.log(tableStr)
+    if (formatter === 'log') {
+      logOutput(
+        processFilePathList,
+        processFilePath,
+        totalDetected,
+        totalChanged,
+        transRate,
+        tableStr,
+        logger
+      )
+    }
   }
 }
 
@@ -175,14 +169,9 @@ export function logOutput(
   tableStr: string,
   logger: Console
 ) {
-  logger.log(`--------------------------------------------------`)
-  logger.log(`Processed file:\n${processFilePathList}\n`)
-  logger.log(`Processed ${processFilePath.length} files`)
-  logger.log(`${totalDetected} places`, `need to be transformed`)
-  logger.log(`${totalChanged} places`, `was transformed`)
-  logger.log(`The transformation rate is ${transRate}%`)
-  logger.log('The transformation stats: \n')
-  logger.log(tableStr)
+  logger.log(
+    `Processed ${processFilePath.length} files:\n${processFilePathList}\n`
+  )
   if (global.manualList.length) {
     logger.log('The list that you need to migrate your codes manually')
     let index = 1
@@ -191,4 +180,9 @@ export function logOutput(
       logger.log(manual)
     })
   }
+  logger.log(`\n\n${totalDetected} places`, `need to be transformed`)
+  logger.log(`${totalChanged} places`, `was transformed`)
+  logger.log(`The transformation rate is ${transRate}%`)
+  logger.log('The transformation stats: ')
+  logger.log(tableStr)
 }
