@@ -19,7 +19,7 @@ import { transform as packageTransform } from '../src/packageTransformation'
 
 import type { TransformationModule } from '../src/runTransformation'
 import { formatterOutput } from '../src/report'
-import { ruleDescripition } from '../src/ruleDescription'
+import { ruleDescription } from '../src/ruleDescription'
 import cliProgress from 'cli-progress'
 
 const debug = createDebug('vue-codemod:cli')
@@ -233,13 +233,13 @@ function processTransformation(
     if (formatter === 'log')
       logger.timeEnd(`Processing use ${transformationName} transformation`)
     if (
-      ruleDescripition.hasOwnProperty(transformationName) &&
+      ruleDescription.hasOwnProperty(transformationName) &&
       (formatter === 'detail' || formatter === 'log')
     ) {
       let ruleOutput: { [key: string]: any } = {}
       ruleOutput.rule_name = transformationName
       // @ts-ignore
-      ruleOutput.website = ruleDescripition[transformationName].description
+      ruleOutput.website = ruleDescription[transformationName].description
       ruleOutput.transformed_files = ruleProcessFile
       console.log('\x1B[0m', ruleOutput)
       if (formatter === 'log') logger.log(ruleOutput)
