@@ -14,8 +14,17 @@ export function pushManualList(
   } else {
     index = 0
   }
-  index = node?.value.loc?.start.line + index
-  let position: string = '[' + index + ',' + node?.value.loc?.start.column + ']'
+  let line
+  let column
+  if (node?.loc) {
+    line = node?.loc?.start.line
+    column = node?.loc?.start.column
+  } else {
+    line = node?.value?.loc?.start.line
+    column = node?.value?.loc?.start.column
+  }
+  index = line + index
+  let position: string = '[' + index + ',' + column + ']'
 
   const list = {
     path: path,

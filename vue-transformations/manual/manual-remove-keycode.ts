@@ -26,9 +26,9 @@ function findNodes(context: any) {
     enterNode(node: Node) {
       if (
         node.type === 'VDirectiveKey' &&
-        node.name.name === 'on' &&
+        node?.name?.name === 'on' &&
         // @ts-ignore
-        key.test(node?.argument!.name) &&
+        key.test(node?.argument?.name) &&
         number.test(node?.modifiers[0]?.name)
       ) {
         toFixNodes.push(node)
