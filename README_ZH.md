@@ -1,20 +1,18 @@
 # vue-codemod
 
-> ⚠️Attention: This repo is forked from [https://github.com/vuejs/vue-codemod](https://github.com/vuejs/vue-codemod).
+> ⚠️注意: 该仓库 fork 自 [https://github.com/vuejs/vue-codemod](https://github.com/vuejs/vue-codemod)
 
-`vue-codemod` is a Vue 2 to Vue 3 migration tool, which can directly upgrade most of the Vue 2 syntax to Vue 3 syntax. With `vue-codemod` transformation and a small amount of manual modification, users can complete the smooth migration from Vue 2 to Vue 3.
+`vue-codemod` 是一个 `Vue2` 升级 `Vue3` 的语法转换工具，能将绝大多数 `Vue2` 语法直接升级成 `Vue3` 语法，然后通过少量的手动修改完成 `Vue2` 到 `Vue3` 的平滑迁移。
 
-[中文](./README_ZH.md)
+## 转化率
 
-## Transformation Rates
-
-> ![equ](https://latex.codecogs.com/gif.latex?TransformationRates=\frac{AutoUpgraded}{(ManuallyUpgraded+AutoUpgraded)})
+> 转换率 = 自动修改 / (需手动修改 + 自动修改)
 >
-> **Manually Upgraded**: Number of patterns require manually upgrade
+> **需手动修改** 为工具识别到的手动修改数
 >
-> **Auto Upgraded**: Number of patterns upgraded by `vue-codemod`
+> **自动修改数** 为工具识别并自动处理的数量
 
-| No. | Project                                                   | Manually Upgraded | Auto Upgraded | Transformation Rates |
+| 序号 | 项目                                                         | 需手动修改 | 自动修改 | 转换率 |
 | :--: | :----------------------------------------------------------- | :--------- | -------- | :------ |
 |  1   | [vue2-element-touzi-admin](https://github.com/wdlhao/vue2-element-touzi-admin) | 8          | 63       | 88.73%  |
 |  2   | [vue-web-os](https://github.com/a241978181/vue-web-os)       | 19         | 19       | 50.00%  |
@@ -27,95 +25,90 @@
 |  9   | [vue-netease-music](https://github.com/sl1673495/vue-netease-music) | 18         | 37       | 67.27%  |
 |  10  | [Mall-Vue](https://github.com/PowerDos/Mall-Vue)             | 2          | 26       | 92.86%  |
 |  11  | [vue-demo-kugou](https://github.com/lavyun/vue-demo-kugou)   | 4          | 13       | 76.47%  |
-| 12 | [codemod-demo](https://github.com/2kjiejie/codemod-demo/tree/master) | 0 | 24 | 100% |
+| 12 | [codemod-demo（codemod演示项目）](https://github.com/2kjiejie/codemod-demo/tree/master) | 0 | 24 | 100% |
 
-## Getting Started
+## 使用指引
 
-### Installation
+### 安装
 
-> `npm/yarn` install is recommended. Users can also try beta version from GitHub
+> 正式版本发布时更推荐使用 `npm/yarn` 方式，如果你更想尝鲜，可以使用 `clone` 本地安装方式
 
-#### Install from `npm/yarn`  
+#### `npm/yarn` 方式
 
 ``` bash
 npm install @originjs/vue-codemod -g
-// or
+//or
 yarn global add @originjs/vue-codemod
 ```
 
-#### Install form GitHub
+#### `clone` 安装方式
 
-1. Clone from `dev`
+1. 从 `github clone` 代码
 
 ```bash
 git clone https://github.com/originjs/vue-codemod
 ```
 
-2. Install Dependencies
+2. 安装依赖
 
 ```bash
 cd vue-codemod
 
 npm install
-// or
+//or
 yarn install
 ```
 
-3. Install `vue-codemod`  Globally
+3. 全局安装
 
 ```bash
 npm run build
 npm install . -g
-// or
+//or
 yarn run build
 yarn global add .
 ```
 
-### Usage
+### 使用
 
-`vue-codemod` consists of different migration rules. Those rules are defined in `transformation/index.ts` and  `vue-transformation/index.ts`.
+`vue-codemod` 是由一条条转换规则组成，这些转换规则位于 `transformation/index.ts` 和 `vue-transformation/index.ts` 下。
 
 ``` bash
 npx vue-codemod <path> -t/-a [transformation params][...additional options]
 ```
 
-1. `<path>` indicates the path of execution, which can be files and folders
-2. `-a` means executing all rules.
-3. `-t` means executing one specific rule (Conflicts with `-a`). When `-t` is used, parameter is required. 
+1. `<path>` 表示执行的路径，可以是文件和文件夹
+2. `-t` 表示具体的规则，使用 `-t` 时 `transformation param` 不可省略，`-a` 表示所有规则
 
-#### Execute All Rules
+#### 执行所有规则
 
 ``` bash
 npx vue-codemod src -a
 ```
 
-`src` indicates the path of execution. `-a` means executing all rules.
+`src` 指定的是扫描的文件路径，`-a` 表示执行所有的规则转换
 
-#### Execute Specific Rule
+#### 执行单条规则
 
 ```bash
 npx vue-codemod src -t new-global-api
 ```
 
-`src` indicates the path of execution. `-t new-global-api` means only executing the rule of `new-global-api` .
+`src` 指定的是扫描的文件路径，`-t new-global-api` 表示只执行 `new-global-api` 这条规则。
 
-[Here](#Rule-List) is the detailed rule list.
+详细的规则列表请 [点击此处](#规则清单)
 
-#### Output Format
+#### 规定输出格式
 
 ```bash
 npx vue-codemod src -a -f log
 ```
 
-The `-f` option is used to specify the output format. The optional parameters are `table`, `detail`,`log`. If no parameters are specified, the default is `table`.
+`-f` 命令用于规定统计输出格式，可选参数为为 `table`、`detail` 、`log`，在没有指定参数的情况下默认为 `table`。
 
-> `table` : output the executed rules as a table
->
-> `detail` : list transformed files for each rule
->
-> `log` : output a report in the form of log file
+选择 `table` 时则会以表格的形式输出修改的规则，选择 `detail` 时会以对象形式输出具体修改的文件与规则，而选择 `log` 则会将统计报告以 log 文件的形式输出。
 
-Here is a sample output of `-f table`:
+以下是`-f table`的输出样例：
 
 ```bash
 ╔═══════════════════════════════╤═══════╗
@@ -142,11 +135,9 @@ Here is a sample output of `-f table`:
 ╚═══════════════════════════════╧═══════╝
 ```
 
-#### Manual Migration Guide
+#### 手动迁移指导
 
-During the operation of `vue-codemod`, the patterns that need to be manually upgraded will be identified and printed to the console as an object (will create a log file if  `-f log` is declared). For more details, please refer to [Manual Migration Guide](Manual%20Migration%20Guide.md).
-
-Here is the example:
+在`vue-codemod`的运行过程中，会识别到需要手动修改的部分，并以对象的形式打印到控制台（如果有`-f log`命令，则会输出到log文件中），样例如下：
 
 ```null
 The list that you need to migrate your codes mannually:
@@ -160,13 +151,13 @@ index: 1
 }
 ```
 
-#### Help
+#### 帮助
 
 ```bash
 npx vue-codemod --help
 ```
 
-Output:
+结果如下所示
 
 ``` bash
 npx vue-codemod --help
@@ -189,29 +180,29 @@ Examples:
   slot-attribute
 ```
 
-### Migrating from Vue 2 to Vue 3
+### 迁移步骤
 
-1. Run the `-a` command: `npx vue-codemod <path> -a`
-2. Manually migrate some cases which `vue-codemod` doesn't cover based on [Manual Migration Guide](./docs/manual-guide.md).
-3. Make sure to use [@vue/compat](https://github.com/vuejs/vue-next/tree/master/packages/vue-compat) to build
-4. Serve the app in development mode, fix the runtime deprecation warnings
+1. 运行 `vue-codemod` 的 `-a` 命令: `npx vue-codemod <path> -a`
+2. 手动迁移 `vue-codemod` 没有覆盖到的特殊场景， 请参考 [手动迁移指南](./docs/zh/manual-guide.md).
+3. 确保使用 [@vue/compat](https://github.com/vuejs/vue-next/tree/master/packages/vue-compat) 兼容包运行
+4. 在开发模式下启动项目，修复运行时告警
 
-> Note: even though most of the migration process can be automated, please be aware there might still be subtle differences between Vue 3 and Vue 2 runtime, and the codemods may have uncovered edge cases. Please double check before deploying your Vue 3 app into production.
+> 注意: 尽管大部分的迁移过程可以通过工具自动实现，但是 Vue 3 和 Vue 2 仍然有一些运行时的差异，并且有一些边缘场景 vue-codemod 也没有覆盖到。因此在部署生产环境之前，务必仔细检查迁移的正确性。
 
-### Typical Migration Case
+### 典型迁移案例
 
-We forked [vue2-element-touzi-admin](https://github.com/wdlhao/vue2-element-touzi-admin), and try to migrate it from Vue 2 to Vue 3 with `vue-codemod`, we have recorded every step of the operation, if you are interested, please see [Typical Migration Case](./docs/typical-case.md)
+我们 forked 了 [vue2-element-touzi-admin](https://github.com/wdlhao/vue2-element-touzi-admin)，并尝试使用 `vue-codemod` 将该项目从 Vue 2 升级到 Vue 3，我们记录了升级过程中的每一步操作，如果您感兴趣，请参考[典型迁移案例](./docs/typical-case.md)。
 
-## Rule List
+## 规则清单
 
-| Rule Names                        | Descriptions or links                                        |
+| 规则名称                          | 描述或链接                                                   |
 | --------------------------------- | ------------------------------------------------------------ |
 | new-component-api                 | https://v3.vuejs.org/guide/migration/global-api.html#a-new-global-api-createapp |
 | vue-class-component-v8            | https://github.com/vuejs/vue-class-component/issues/406      |
 | new-global-api                    | https://v3.vuejs.org/guide/migration/global-api.html#a-new-global-api-createapp |
 | vue-router-v4                     | https://next.router.vuejs.org/guide/migration/index.html#new-router-becomes-createrouter<br>https://next.router.vuejs.org/guide/migration/index.html#new-history-option-to-replace-mode<br>https://next.router.vuejs.org/guide/migration/index.html#replaced-onready-with-isready |
-| vuex-v4                           | new Store (...) => createStore (...)                         |
-| define-component                  | Vue.extend (...) => defineComponent (...)                    |
+| vuex-v4                           | new Store (...) => createStore (...)                           |
+| define-component                  | Vue.extend (...) => defineComponent (...)                      |
 | new-vue-to-create-app             | https://v3.vuejs.org/guide/migration/global-api.html#a-new-global-api-createapp |
 | scoped-slots-to-slots             | https://v3.vuejs.org/guide/migration/slots-unification.html#overview |
 | new-directive-api                 | https://v3.vuejs.org/guide/migration/custom-directives.html#overview |
@@ -223,7 +214,7 @@ We forked [vue2-element-touzi-admin](https://github.com/wdlhao/vue2-element-touz
 | render-to-resolveComponent        | https://v3.vuejs.org/guide/migration/render-function-api.html#registered-component |
 | remove-contextual-h-from-render   | https://v3.vuejs.org/guide/migration/render-function-api.html#render-function-argument |
 | remove-production-tip             | https://v3.vuejs.org/guide/migration/global-api.html#a-new-global-api-createapp |
-| remove-trivial-root               | createApp ({ render: () => h (App) })  =>  createApp (App)   |
+| remove-trivial-root               | createApp ({ render: () => h (App) })  =>  createApp (App)      |
 | vue-as-namespace-import           | import Vue from "vue"  => import * as Vue from "vue"         |
 | slot-attribute                    | https://vuejs.org/v2/guide/components-slots.html#Deprecated-Syntax |
 | slot-default                      | If  component tag did not contain a `<slot>` element, any content provided between its opening and closing tag would be discarded. |
@@ -239,12 +230,3 @@ We forked [vue2-element-touzi-admin](https://github.com/wdlhao/vue2-element-touz
 | router-link-event-tag             | https://next.router.vuejs.org/guide/migration/index.html#removal-of-event-and-tag-props-in-router-link |
 | router-link-exact                 | https://next.router.vuejs.org/guide/migration/index.html#removal-of-the-exact-prop-in-router-link |
 | router-view-keep-alive-transition | https://next.router.vuejs.org/guide/migration/index.html#router-view-keep-alive-and-transition |
-
-## Post Transformation
-
-- Running transformations will generally ruin the formatting of your files. A recommended way to solve that problem is by using [Prettier](https://prettier.io/) or `eslint --fix`.
-- Even after running prettier its possible to have unnecessary new lines added/removed. This can be solved by ignoring white spaces while staging the changes in git.
-
-```sh
-git diff --ignore-blank-lines | git apply --cached
-```
