@@ -80,18 +80,25 @@ export function stringify(sfcDescriptor: SFCDescriptor) {
           newlinesBefore = block.startOfOpenTag - prevBlock.endOfCloseTag
         }
 
-        return (
-          sfcCode +
-          '\n'.repeat(newlinesBefore) +
-          block.openTag +
-          block.content +
-          block.closeTag
-        )
+        if (block.openTag === '') {
+          return sfcCode + '\n'.repeat(newlinesBefore) + block.loc.source
+        } else {
+          return (
+            sfcCode +
+            '\n'.repeat(newlinesBefore) +
+            block.openTag +
+            block.content +
+            block.closeTag
+          )
+        }
       }, '')
   )
 }
 
 function makeOpenTag(block: SFCBlock) {
+  if (!block.attrs) {
+    return ''
+  }
   let source = '<' + block.type
 
   source += Object.keys(block.attrs)
@@ -112,6 +119,9 @@ function makeOpenTag(block: SFCBlock) {
 }
 
 function makeCloseTag(block: SFCBlock) {
+  if (!block.attrs) {
+    return ''
+  }
   return `</${block.type}>\n`
 }
 
@@ -121,6 +131,7 @@ function makeCloseTag(block: SFCBlock) {
 
 export interface TemplateCompiler {
   compile(template: string, options: CompilerOptions): CodegenResult
+
   parse(template: string, options: ParserOptions): RootNode
 }
 
@@ -241,53 +252,56 @@ export function parse(
   })
 
   ast.children.forEach(node => {
-    if (node.type !== NodeTypes.ELEMENT) {
-      return
-    }
-    if (!node.children.length && !hasSrc(node) && node.tag !== 'template') {
-      return
-    }
-    switch (node.tag) {
-      case 'template':
-        if (!descriptor.template) {
-          const templateBlock = (descriptor.template = createBlock(
-            node,
-            source,
-            false
-          ) as SFCTemplateBlock)
-          templateBlock.ast = node
-        } else {
-          errors.push(createDuplicateBlockError(node))
-        }
-        break
-      case 'script':
-        const scriptBlock = createBlock(node, source, pad) as SFCScriptBlock
-        const isSetup = !!scriptBlock.attrs.setup
-        if (isSetup && !descriptor.scriptSetup) {
-          descriptor.scriptSetup = scriptBlock
+    if (node.type == NodeTypes.ELEMENT) {
+      if (!node.children.length && !hasSrc(node) && node.tag !== 'template') {
+        return
+      }
+      switch (node.tag) {
+        case 'template':
+          if (!descriptor.template) {
+            const templateBlock = (descriptor.template = createBlock(
+              node,
+              source,
+              false
+            ) as SFCTemplateBlock)
+            templateBlock.ast = node
+          } else {
+            errors.push(createDuplicateBlockError(node))
+          }
           break
-        }
-        if (!isSetup && !descriptor.script) {
-          descriptor.script = scriptBlock
+        case 'script':
+          const scriptBlock = createBlock(node, source, pad) as SFCScriptBlock
+          const isSetup = !!scriptBlock.attrs.setup
+          if (isSetup && !descriptor.scriptSetup) {
+            descriptor.scriptSetup = scriptBlock
+            break
+          }
+          if (!isSetup && !descriptor.script) {
+            descriptor.script = scriptBlock
+            break
+          }
+          errors.push(createDuplicateBlockError(node, isSetup))
           break
-        }
-        errors.push(createDuplicateBlockError(node, isSetup))
-        break
-      case 'style':
-        const styleBlock = createBlock(node, source, pad) as SFCStyleBlock
-        if (styleBlock.attrs.vars) {
-          errors.push(
-            new SyntaxError(
-              `<style vars> has been replaced by a new proposal: ` +
-                `https://github.com/vuejs/rfcs/pull/231`
+        case 'style':
+          const styleBlock = createBlock(node, source, pad) as SFCStyleBlock
+          if (styleBlock.attrs.vars) {
+            errors.push(
+              new SyntaxError(
+                `<style vars> has been replaced by a new proposal: ` +
+                  `https://github.com/vuejs/rfcs/pull/231`
+              )
             )
-          )
-        }
-        descriptor.styles.push(styleBlock)
-        break
-      default:
-        descriptor.customBlocks.push(createBlock(node, source, pad))
-        break
+          }
+          descriptor.styles.push(styleBlock)
+          break
+        default:
+          descriptor.customBlocks.push(createBlock(node, source, pad))
+          break
+      }
+    } else if (node.type == NodeTypes.COMMENT) {
+      // @ts-ignore
+      descriptor.customBlocks.push(node)
+      // descriptor.customBlocks.push(createBlock(node, source, pad))
     }
   })
 
