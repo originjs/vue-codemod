@@ -1170,6 +1170,13 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/cli-progress@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.nlark.com/@types/cli-progress/download/@types/cli-progress-3.9.2.tgz?cache=0&sync_timestamp=1629711886759&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fcli-progress%2Fdownload%2F%40types%2Fcli-progress-3.9.2.tgz#6ca355f96268af39bee9f9307f0ac96145639c26"
+  integrity sha1-bKNV+WJorzm+6fkwfwrJYUVjnCY=
+  dependencies:
+    "@types/node" "*"
+
 "@types/debug@^4.1.5":
   version "4.1.5"
   resolved "https://registry.npmjs.org/@types/debug/-/debug-4.1.5.tgz"
@@ -1341,29 +1348,29 @@
     "@typescript-eslint/types" "4.27.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vue/compiler-core@3.0.5", "@vue/compiler-core@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/@vue/compiler-core/-/compiler-core-3.0.5.tgz"
-  integrity sha512-iFXwk2gmU/GGwN4hpBwDWWMLvpkIejf/AybcFtlQ5V1ur+5jwfBaV0Y1RXoR6ePfBPJixtKZ3PmN+M+HgMAtfQ==
+"@vue/compiler-core@3.0.11", "@vue/compiler-core@~3.0.5":
+  version "3.0.11"
+  resolved "https://registry.nlark.com/@vue/compiler-core/download/@vue/compiler-core-3.0.11.tgz#5ef579e46d7b336b8735228758d1c2c505aae69a"
+  integrity sha1-XvV55G17M2uHNSKHWNHCxQWq5po=
   dependencies:
     "@babel/parser" "^7.12.0"
     "@babel/types" "^7.12.0"
-    "@vue/shared" "3.0.5"
+    "@vue/shared" "3.0.11"
     estree-walker "^2.0.1"
     source-map "^0.6.1"
 
-"@vue/compiler-dom@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/@vue/compiler-dom/-/compiler-dom-3.0.5.tgz"
-  integrity sha512-HSOSe2XSPuCkp20h4+HXSiPH9qkhz6YbW9z9ZtL5vef2T2PMugH7/osIFVSrRZP/Ul5twFZ7MIRlp8tPX6e4/g==
+"@vue/compiler-dom@~3.0.5":
+  version "3.0.11"
+  resolved "https://registry.nlark.com/@vue/compiler-dom/download/@vue/compiler-dom-3.0.11.tgz#b15fc1c909371fd671746020ba55b5dab4a730ee"
+  integrity sha1-sV/ByQk3H9ZxdGAgulW12rSnMO4=
   dependencies:
-    "@vue/compiler-core" "3.0.5"
-    "@vue/shared" "3.0.5"
+    "@vue/compiler-core" "3.0.11"
+    "@vue/shared" "3.0.11"
 
-"@vue/shared@3.0.5":
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.0.5.tgz"
-  integrity sha512-gYsNoGkWejBxNO6SNRjOh/xKeZ0H0V+TFzaPzODfBjkAIb0aQgBuixC1brandC/CDJy1wYPwSoYrXpvul7m6yw==
+"@vue/shared@3.0.11":
+  version "3.0.11"
+  resolved "https://registry.nlark.com/@vue/shared/download/@vue/shared-3.0.11.tgz#20d22dd0da7d358bb21c17f9bde8628152642c77"
+  integrity sha1-INIt0Np9NYuyHBf5vehigVJkLHc=
 
 abab@^2.0.3:
   version "2.0.5"
@@ -1806,6 +1813,14 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+cli-progress@^3.9.0:
+  version "3.9.0"
+  resolved "https://registry.npm.taobao.org/cli-progress/download/cli-progress-3.9.0.tgz#25db83447deb812e62d05bac1af9aec5387ef3d4"
+  integrity sha1-JduDRH3rgS5i0FusGvmuxTh+89Q=
+  dependencies:
+    colors "^1.1.2"
+    string-width "^4.2.0"
 
 cliui@^6.0.0:
   version "6.0.0"

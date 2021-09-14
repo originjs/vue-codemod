@@ -112,6 +112,74 @@ export default {
 `)
   })
 
+  it('don\'t transform scriptSetup blocks in .vue files', () => {
+    const source = `<template>
+  <div id="app">
+    <img alt="Vue logo" src="./assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  </div>
+</template>
+<script setup lang="ts">
+import { getFormattedTitle } from '../composable/useDocument'
+import { IDocmentHistory } from '@/api/types'
+
+interface IProps {
+  list: IDocmentHistory[]
+  select?: (id: number) => void
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  list: () => [],
+  select: (id: number) => {},
+})
+
+const selectHistory = (id: number) => {
+  props?.select(id)
+}
+</script>
+
+<script lang="ts">
+export default {
+  name: 'document-history',
+}
+</script>
+`
+    const file = { path: '/tmp/a.vue', source }
+    const result = runTransformation(file, addUseStrict)
+    expect(result).toBe(`<template>
+  <div id="app">
+    <img alt="Vue logo" src="./assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  </div>
+</template>
+<script lang="ts" setup>
+import { getFormattedTitle } from '../composable/useDocument'
+import { IDocmentHistory } from '@/api/types'
+
+interface IProps {
+  list: IDocmentHistory[]
+  select?: (id: number) => void
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  list: () => [],
+  select: (id: number) => {},
+})
+
+const selectHistory = (id: number) => {
+  props?.select(id)
+}
+</script>
+
+<script lang="ts">
+'use strict';
+export default {
+  name: 'document-history',
+}
+</script>
+`)
+  })
+
   it.todo('transforms script blocks with custom lang attributes in .vue files')
 
   it('(jscodeshift transforms) skips .vue files without script blocks', () => {
